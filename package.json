@@ -1,13 +1,15 @@
 {
   "name": "@magic-spells/physics-engine",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "description": "A physics-based engine for fun animations.",
   "type": "module",
   "module": "dist/physics-engine.esm.js",
   "exports": {
     ".": "./dist/physics-engine.esm.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "vite build",
     "dev": "vite",
