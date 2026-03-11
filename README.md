@@ -113,3 +113,9 @@ Each frame the engine computes a spring force (`(target - current) * attraction`
 ## License
 
 MIT
+
+---
+
+<p align="center">
+  Made by <a href="https://github.com/coryschulz">Cory Schulz</a>
+</p>
