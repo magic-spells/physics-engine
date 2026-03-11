@@ -8,15 +8,15 @@
 
 - `src/physics-engine.js` — The entire library (single class, extends EventEmitter)
 - `src/event-emitter.js` — Vendored EventEmitter base class (on/off/emit/removeAllListeners)
-- `dist/` — UMD, CJS, and ESM builds
+- `dist/` — UMD and ESM builds
 - `demo/index.html` — Manual testing page (served on port 3008 in dev mode)
-- `rollup.config.mjs` — Builds to both `dist/` and `demo/` directories
+- `vite.config.js` — Library build config (UMD + ESM output to `dist/`)
 
 ## Commands
 
-- `npm run build` — Production build (minified, no sourcemaps)
-- `npm run dev` — Dev build with watch, livereload, and local server at localhost:3008
-- `npm run prod` — Production build with watch
+- `npm run build` — Vite production build (minified, outputs to `dist/`)
+- `npm run dev` — Vite dev server with HMR at localhost:3008 (opens `demo/index.html`)
+- `npm run prod` — Vite production build with watch mode
 
 ## Architecture
 

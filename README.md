@@ -13,16 +13,12 @@ npm install @magic-spells/physics-engine
 ```
 
 ```js
-// ESM
 import PhysicsEngine from '@magic-spells/physics-engine';
-
-// CJS
-const PhysicsEngine = require('@magic-spells/physics-engine');
 ```
 
 ```html
 <!-- CDN (UMD) — exposes window.PhysicsEngine -->
-<script src="https://unpkg.com/@magic-spells/physics-engine"></script>
+<script src="https://unpkg.com/@magic-spells/physics-engine/dist/physics-engine.min.js"></script>
 ```
 
 ## Usage
