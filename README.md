@@ -2,6 +2,8 @@
 
 Spring physics engine for smooth, natural animations. Drives a numeric value from start to end using a spring-damper model, emitting position and progress on every frame.
 
+🔍 **[Live Demo](https://magic-spells.github.io/physics-engine/demo/)** - See it in action!
+
 ## Install
 
 ```bash
