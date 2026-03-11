@@ -1,0 +1,29 @@
+{
+  "name": "@magic-spells/physics-engine",
+  "version": "0.2.0",
+  "description": "A physics-based engine for fun animations.",
+  "type": "module",
+  "module": "dist/physics-engine.esm.js",
+  "exports": {
+    ".": "./dist/physics-engine.esm.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "prod": "vite build --watch"
+  },
+  "author": "Cory Schulz",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magic-spells/physics-engine.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1"
+  }
+}

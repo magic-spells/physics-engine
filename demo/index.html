@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <title>Physics Engine — @magic-spells</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Outfit:wght@200;300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-deep: #07060b;
+        --bg-card: #0f0e14;
+        --bg-card-hover: #15141c;
+        --border: #1e1c28;
+        --border-accent: #2a2636;
+        --gold: #c9a84c;
+        --gold-dim: #8a7233;
+        --gold-glow: rgba(201, 168, 76, 0.12);
+        --cream: #e8e0cc;
+        --cream-dim: #9a9284;
+        --text: #c4bfb2;
+        --text-dim: #6b665c;
+        --font-display: "Cormorant Garamond", Georgia, serif;
+        --font-body: "Outfit", system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--bg-deep);
+      }
+
+      body {
+        font-family: var(--font-body);
+        font-weight: 300;
+        color: var(--text);
+        background: var(--bg-deep);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ---- Noise overlay ---- */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        pointer-events: none;
+        opacity: 0.025;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 256px;
+      }
+
+      /* ---- Hero ---- */
+      .hero {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 70vh;
+        padding: 4rem 2rem;
+        text-align: center;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: -40%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 900px;
+        height: 900px;
+        background: radial-gradient(
+          ellipse,
+          var(--gold-glow) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      .hero-badge {
+        font-family: var(--font-body);
+        font-weight: 400;
+        font-size: 0.7rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--gold);
+        border: 1px solid var(--border-accent);
+        padding: 0.4em 1.4em;
+        border-radius: 100px;
+        margin-bottom: 2.5rem;
+        opacity: 0;
+        animation: fadeUp 0.8s ease forwards 0.2s;
+      }
+
+      .hero h1 {
+        font-family: var(--font-display);
+        font-weight: 300;
+        font-size: clamp(3rem, 8vw, 7rem);
+        line-height: 1.05;
+        color: var(--cream);
+        letter-spacing: -0.02em;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeUp 1s ease forwards 0.4s;
+      }
+
+      .hero h1 em {
+        font-style: italic;
+        color: var(--gold);
+      }
+
+      .hero p {
+        max-width: 560px;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: var(--text-dim);
+        opacity: 0;
+        animation: fadeUp 1s ease forwards 0.65s;
+      }
+
+      .hero-line {
+        width: 1px;
+        height: 80px;
+        background: linear-gradient(to bottom, var(--gold-dim), transparent);
+        margin-top: 3rem;
+        opacity: 0;
+        animation: fadeUp 1s ease forwards 0.85s;
+      }
+
+      /* ---- Sections ---- */
+      .demos {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 8rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+      }
+
+      .demo-section {
+        position: relative;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2.5rem;
+        transition:
+          border-color 0.4s ease,
+          background 0.4s ease;
+      }
+
+      .demo-section:hover {
+        border-color: var(--border-accent);
+        background: var(--bg-card-hover);
+      }
+
+      .demo-header {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .demo-section h2 {
+        font-family: var(--font-display);
+        font-weight: 400;
+        font-size: 1.8rem;
+        color: var(--cream);
+        letter-spacing: -0.01em;
+      }
+
+      .demo-desc {
+        font-size: 0.88rem;
+        color: var(--text-dim);
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        max-width: 560px;
+      }
+
+      /* ---- Stage ---- */
+      .stage {
+        position: relative;
+        width: 100%;
+        height: 220px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.01) 0%,
+          rgba(255, 255, 255, 0.03) 100%
+        );
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+
+      .stage-grid {
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(var(--border) 1px, transparent 1px),
+          linear-gradient(90deg, var(--border) 1px, transparent 1px);
+        background-size: 40px 40px;
+        opacity: 0.3;
+      }
+
+      /* ---- Buttons ---- */
+      .controls {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        font-family: var(--font-body);
+        font-weight: 400;
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--cream);
+        background: transparent;
+        border: 1px solid var(--border-accent);
+        padding: 0.6em 1.6em;
+        border-radius: 100px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        border-color: var(--gold-dim);
+        color: var(--gold);
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.1);
+      }
+
+      .btn.active {
+        border-color: var(--gold);
+        color: var(--gold);
+        background: rgba(201, 168, 76, 0.06);
+      }
+
+      .btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      /* ---- Slider ---- */
+      .slider-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .slider-label {
+        font-family: var(--font-body);
+        font-size: 0.7rem;
+        font-weight: 400;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        min-width: 80px;
+      }
+
+      .slider-value {
+        font-family: "Courier New", monospace;
+        font-size: 0.85rem;
+        color: var(--gold);
+        min-width: 50px;
+        text-align: right;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        flex: 1;
+        height: 2px;
+        background: var(--border-accent);
+        border-radius: 1px;
+        outline: none;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--gold);
+        border: none;
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.35);
+        transition: box-shadow 0.2s ease;
+      }
+
+      input[type="range"]::-webkit-slider-thumb:hover {
+        box-shadow: 0 0 30px rgba(201, 168, 76, 0.55);
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--gold);
+        border: none;
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.35);
+      }
+
+      /* ---- Readout ---- */
+      .readout {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2rem;
+      }
+
+      .readout-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+
+      .readout-key {
+        font-size: 0.65rem;
+        font-weight: 400;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
+
+      .readout-val {
+        font-family: "Courier New", monospace;
+        font-size: 0.78rem;
+        color: var(--cream-dim);
+      }
+
+      /* ---- Demo objects ---- */
+      .tween-box {
+        position: absolute;
+        will-change: transform, opacity, background-color, filter, border-radius;
+      }
+
+      /* ---- Cascade dots ---- */
+      .cascade-dot {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--gold);
+        will-change: transform, opacity, background-color;
+      }
+
+      /* ---- Animations ---- */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ---- Responsive ---- */
+      @media (max-width: 640px) {
+        .demo-section {
+          padding: 1.5rem;
+        }
+        .stage {
+          height: 180px;
+        }
+        .readout {
+          gap: 0.75rem 1.25rem;
+        }
+        .slider-label {
+          min-width: 60px;
+          font-size: 0.65rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ======== HERO ======== -->
+    <header class="hero">
+      <div class="hero-badge">@magic-spells</div>
+      <h1>Physics<br /><em>Engine</em></h1>
+      <p>
+        Spring-driven animation with real physics. These demos pair Physics
+        Engine with
+        <a href="https://www.npmjs.com/package/@magic-spells/frame-engine" style="color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-dim)">@magic-spells/frame-engine</a>
+        to map spring motion onto any CSS property — colors, transforms,
+        filters — all feeling alive.
+      </p>
+      <div class="hero-line"></div>
+    </header>
+
+    <!-- ======== DEMOS ======== -->
+    <main class="demos">
+      <!-- ---- 01 Metamorphosis ---- -->
+      <section class="demo-section">
+        <div class="demo-header">
+          <h2>Metamorphosis</h2>
+        </div>
+        <p class="demo-desc">
+          A spring drives progress through five Frame Engine keyframes. The orb
+          morphs color, border-radius, scale, and glow — all with natural spring
+          overshoot and settle.
+        </p>
+        <div class="stage" style="height: 260px">
+          <div class="stage-grid"></div>
+          <div
+            class="tween-box"
+            id="morph-orb"
+            style="
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%, -50%) scale(1);
+              width: 130px;
+              height: 130px;
+              border-radius: 50%;
+              background-color: #c9a84c;
+              box-shadow: 0 0 60px rgba(201, 168, 76, 0.3);
+            "
+          ></div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="morph-go">Morph</button>
+          <button class="btn" id="morph-stop">Stop</button>
+          <button class="btn" id="morph-reset">Reset</button>
+        </div>
+        <div class="readout" id="morph-readout"></div>
+      </section>
+
+      <!-- ---- 02 Spring Traverse ---- -->
+      <section class="demo-section">
+        <div class="demo-header">
+          <h2>Spring Traverse</h2>
+        </div>
+        <p class="demo-desc">
+          Physics spring propels a shape across the stage. Frame Engine maps the
+          spring progress to compound transforms, color shifts, and
+          border-radius — each interpolated independently.
+        </p>
+        <div class="stage" style="height: 200px">
+          <div class="stage-grid"></div>
+          <div
+            class="tween-box"
+            id="traverse-box"
+            style="
+              left: 30px;
+              top: 55px;
+              width: 80px;
+              height: 80px;
+              background: var(--gold);
+              border-radius: 8px;
+            "
+          ></div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="traverse-toggle">Go</button>
+          <button class="btn" id="traverse-stop">Stop</button>
+        </div>
+        <div class="readout" id="traverse-readout"></div>
+      </section>
+
+      <!-- ---- 03 Parameter Lab ---- -->
+      <section class="demo-section">
+        <div class="demo-header">
+          <h2>Parameter Lab</h2>
+        </div>
+        <p class="demo-desc">
+          Adjust attraction and friction to feel how spring dynamics change.
+          Higher attraction snaps faster. Higher friction damps the bounce. The
+          shape auto-animates on each change.
+        </p>
+        <div class="stage" style="height: 200px">
+          <div class="stage-grid"></div>
+          <div
+            class="tween-box"
+            id="lab-box"
+            style="
+              left: 30px;
+              top: 55px;
+              width: 80px;
+              height: 80px;
+              background: var(--gold);
+              border-radius: 10px;
+            "
+          ></div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="lab-run">Run</button>
+        </div>
+        <div class="slider-row" style="margin-bottom: 0.75rem">
+          <span class="slider-label">Attraction</span>
+          <input
+            type="range"
+            id="lab-attraction"
+            min="5"
+            max="80"
+            value="26"
+            step="1"
+          />
+          <span class="slider-value" id="lab-attraction-val">0.026</span>
+        </div>
+        <div class="slider-row" style="margin-bottom: 0.75rem">
+          <span class="slider-label">Friction</span>
+          <input
+            type="range"
+            id="lab-friction"
+            min="5"
+            max="80"
+            value="28"
+            step="1"
+          />
+          <span class="slider-value" id="lab-friction-val">0.28</span>
+        </div>
+        <div class="slider-row" style="margin-bottom: 0.75rem">
+          <span class="slider-label">Distance</span>
+          <input
+            type="range"
+            id="lab-distance"
+            min="300"
+            max="2000"
+            value="1200"
+            step="50"
+          />
+          <span class="slider-value" id="lab-distance-val">1200</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Velocity</span>
+          <input
+            type="range"
+            id="lab-velocity"
+            min="0"
+            max="100"
+            value="20"
+            step="1"
+          />
+          <span class="slider-value" id="lab-velocity-val">20</span>
+        </div>
+        <div class="readout" id="lab-readout"></div>
+      </section>
+
+      <!-- ---- 04 Cascade ---- -->
+      <section class="demo-section">
+        <div class="demo-header">
+          <h2>Cascade</h2>
+        </div>
+        <p class="demo-desc">
+          Eight elements, each driven by its own spring, launched in sequence.
+          The same Frame Engine keyframes applied to every dot — the staggered
+          timing creates a wave of color and motion.
+        </p>
+        <div class="stage" style="height: 200px" id="cascade-stage">
+          <div class="stage-grid"></div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="cascade-go">Cascade</button>
+          <button class="btn" id="cascade-stop">Stop All</button>
+        </div>
+        <div class="readout" id="cascade-readout"></div>
+      </section>
+    </main>
+
+    <script src="./frame-engine.min.js"></script>
+
+    <script type="module">
+      import PhysicsEngine from '../src/physics-engine.js';
+      // ---- Helpers ----
+      function applyStyles(el, styles) {
+        for (const [prop, value] of Object.entries(styles)) {
+          el.style[prop] = value;
+        }
+      }
+
+      function renderReadout(container, data) {
+        container.innerHTML = Object.entries(data)
+          .map(
+            ([k, v]) =>
+              `<div class="readout-item">
+            <span class="readout-key">${k}</span>
+            <span class="readout-val">${v}</span>
+          </div>`,
+          )
+          .join("");
+      }
+
+      // ========================================
+      // 01 — Metamorphosis
+      // ========================================
+      const morphFrames = new FrameEngine({
+        0: {
+          backgroundColor: "#c9a84c",
+          borderRadius: "50%",
+          transform: "translate(-50%, -50%) scale(1) rotate(0deg)",
+        },
+        20: {
+          backgroundColor: "#e85d75",
+          borderRadius: "30%",
+          transform: "translate(-120%, -50%) scale(1.7) rotate(45deg)",
+        },
+        50: {
+          backgroundColor: "#eda575",
+          borderRadius: "30%",
+          transform: "translate(-120%, -50%) scale(2) rotate(180deg)",
+        },
+        80: {
+          backgroundColor: "#6c5ce7",
+          borderRadius: "12%",
+          transform: "translate(100%, -50%) scale(0.2) rotate(-30deg)",
+        },
+        100: {
+          backgroundColor: "#00b894",
+          borderRadius: "50%",
+          transform: "translate(-50%, -50%) scale(1.1) rotate(0deg)",
+        },
+      });
+
+      const morphSpring = new PhysicsEngine({
+        attraction: 0.011,
+        friction: 0.11,
+      });
+      const morphOrb = document.getElementById("morph-orb");
+      const morphReadout = document.getElementById("morph-readout");
+      let morphForward = true;
+
+      morphSpring.on("change", ({ position, progress }) => {
+        const styles = morphFrames.getFrame(progress);
+        applyStyles(morphOrb, styles);
+        morphOrb.style.boxShadow = `0 0 60px ${styles.backgroundColor}55, 0 0 120px ${styles.backgroundColor}22`;
+        renderReadout(morphReadout, {
+          progress: progress.toFixed(3),
+          position: position.toFixed(1),
+          backgroundColor: styles.backgroundColor,
+          borderRadius: styles.borderRadius,
+          transform: styles.transform,
+        });
+      });
+
+      morphSpring.on("complete", () => {
+        morphForward = !morphForward;
+      });
+
+      document.getElementById("morph-go").addEventListener("click", () => {
+        morphSpring.animateTo(0, 2000, 10);
+      });
+
+      document.getElementById("morph-stop").addEventListener("click", () => {
+        morphSpring.stop();
+      });
+
+      document.getElementById("morph-reset").addEventListener("click", () => {
+        morphSpring.stop();
+        morphForward = true;
+        const styles = morphFrames.getFrame(0);
+        applyStyles(morphOrb, styles);
+        morphOrb.style.boxShadow = "0 0 60px rgba(201,168,76,0.3)";
+        renderReadout(morphReadout, { progress: "0.000", position: "0.0" });
+      });
+
+      // ========================================
+      // 02 — Spring Traverse
+      // ========================================
+      const traverseForwardFrames = new FrameEngine({
+        0: {
+          transform: "translateX(0px) rotate(0deg) scale(1)",
+          backgroundColor: "#c9a84c",
+          borderRadius: "8px",
+        },
+        35: {
+          transform: "translateX(200px) rotate(120deg) scale(0.6)",
+          backgroundColor: "#e85d75",
+          borderRadius: "50%",
+        },
+        70: {
+          transform: "translateX(480px) rotate(-60deg) scale(1.2)",
+          backgroundColor: "#6c5ce7",
+          borderRadius: "16px",
+        },
+        100: {
+          transform: "translateX(700px) rotate(360deg) scale(1)",
+          backgroundColor: "#00b894",
+          borderRadius: "8px",
+        },
+      });
+
+      const traverseReturnFrames = new FrameEngine({
+        0: {
+          transform: "translateX(700px) rotate(360deg) scale(1)",
+          backgroundColor: "#00b894",
+          borderRadius: "8px",
+        },
+        30: {
+          transform: "translateX(480px) rotate(-60deg) scale(1.2)",
+          backgroundColor: "#6c5ce7",
+          borderRadius: "16px",
+        },
+        65: {
+          transform: "translateX(200px) rotate(120deg) scale(0.6)",
+          backgroundColor: "#e85d75",
+          borderRadius: "50%",
+        },
+        100: {
+          transform: "translateX(0px) rotate(0deg) scale(1)",
+          backgroundColor: "#c9a84c",
+          borderRadius: "8px",
+        },
+      });
+
+      const traverseSpring = new PhysicsEngine({
+        attraction: 0.03,
+        friction: 0.11,
+      });
+      const traverseBox = document.getElementById("traverse-box");
+      const traverseReadout = document.getElementById("traverse-readout");
+      const traverseGoBtn = document.getElementById("traverse-toggle");
+      let traverseForward = true;
+
+      traverseSpring.on("change", ({ position, progress }) => {
+        const frames = traverseForward
+          ? traverseForwardFrames
+          : traverseReturnFrames;
+        const styles = frames.getFrame(progress);
+        applyStyles(traverseBox, styles);
+        traverseBox.style.boxShadow = `0 8px 40px ${styles.backgroundColor}33`;
+        renderReadout(traverseReadout, {
+          progress: progress.toFixed(3),
+          position: position.toFixed(1),
+          transform: styles.transform,
+          backgroundColor: styles.backgroundColor,
+          borderRadius: styles.borderRadius,
+        });
+      });
+
+      traverseSpring.on("complete", () => {
+        traverseForward = !traverseForward;
+        traverseGoBtn.disabled = false;
+      });
+
+      traverseSpring.on("stop", () => {
+        traverseGoBtn.disabled = false;
+      });
+
+      traverseGoBtn.addEventListener("click", () => {
+        traverseGoBtn.disabled = true;
+        traverseSpring.animateTo(0, 1200, 20);
+      });
+
+      document.getElementById("traverse-stop").addEventListener("click", () => {
+        traverseSpring.stop();
+      });
+
+      // ========================================
+      // 03 — Parameter Lab
+      // ========================================
+      const labFrames = new FrameEngine({
+        0: {
+          transform: "translateX(0px) scale(1)",
+          backgroundColor: "#c9a84c",
+          borderRadius: "10px",
+        },
+        50: {
+          transform: "translateX(375px) scale(0.7)",
+          backgroundColor: "#e85d75",
+          borderRadius: "50%",
+        },
+        100: {
+          transform: "translateX(750px) scale(1)",
+          backgroundColor: "#00b894",
+          borderRadius: "10px",
+        },
+      });
+
+      let labSpring = new PhysicsEngine();
+      const labBox = document.getElementById("lab-box");
+      const labReadout = document.getElementById("lab-readout");
+      let labForward = true;
+
+      function wireLabSpring() {
+        labSpring.on("change", ({ position, progress }) => {
+          const styles = labFrames.getFrame(progress);
+          applyStyles(labBox, styles);
+          labBox.style.boxShadow = `0 8px 40px ${styles.backgroundColor}33`;
+          renderReadout(labReadout, {
+            progress: progress.toFixed(3),
+            position: position.toFixed(1),
+            attraction: labSpring.isAnimating
+              ? document.getElementById("lab-attraction").value / 1000
+              : "—",
+            friction: labSpring.isAnimating
+              ? document.getElementById("lab-friction").value / 100
+              : "—",
+          });
+        });
+
+        labSpring.on("complete", () => {
+          labForward = !labForward;
+        });
+      }
+
+      wireLabSpring();
+
+      function labAnimate() {
+        const attraction =
+          parseInt(document.getElementById("lab-attraction").value) / 1000;
+        const friction =
+          parseInt(document.getElementById("lab-friction").value) / 100;
+        const distance = parseInt(
+          document.getElementById("lab-distance").value,
+        );
+        const velocity = parseInt(
+          document.getElementById("lab-velocity").value,
+        );
+
+        labSpring.stop();
+        labSpring = new PhysicsEngine({ attraction, friction });
+        wireLabSpring();
+
+        labSpring.animateTo(0, distance, velocity);
+      }
+
+      const labAttrSlider = document.getElementById("lab-attraction");
+      const labFricSlider = document.getElementById("lab-friction");
+      const labDistSlider = document.getElementById("lab-distance");
+      const labVelSlider = document.getElementById("lab-velocity");
+      const labAttrVal = document.getElementById("lab-attraction-val");
+      const labFricVal = document.getElementById("lab-friction-val");
+      const labDistVal = document.getElementById("lab-distance-val");
+      const labVelVal = document.getElementById("lab-velocity-val");
+
+      labAttrSlider.addEventListener("input", () => {
+        labAttrVal.textContent = (parseInt(labAttrSlider.value) / 1000).toFixed(
+          3,
+        );
+      });
+
+      labFricSlider.addEventListener("input", () => {
+        labFricVal.textContent = (parseInt(labFricSlider.value) / 100).toFixed(
+          2,
+        );
+      });
+
+      labDistSlider.addEventListener("input", () => {
+        labDistVal.textContent = labDistSlider.value;
+      });
+
+      labVelSlider.addEventListener("input", () => {
+        labVelVal.textContent = labVelSlider.value;
+      });
+
+      document.getElementById("lab-run").addEventListener("click", labAnimate);
+
+      // ========================================
+      // 04 — Cascade
+      // ========================================
+      const CASCADE_COUNT = 8;
+      const cascadeStage = document.getElementById("cascade-stage");
+      const cascadeDots = [];
+      const cascadeSprings = [];
+      let cascadeForward = true;
+
+      const cascadeFrames = new FrameEngine({
+        0: {
+          transform: "translateX(0px) translateY(0px) scale(1)",
+          backgroundColor: "#c9a84c",
+          opacity: "1",
+        },
+        30: {
+          transform: "translateX(220px) translateY(-50px) scale(1.4)",
+          backgroundColor: "#e85d75",
+          opacity: "0.6",
+        },
+        60: {
+          transform: "translateX(500px) translateY(30px) scale(0.7)",
+          backgroundColor: "#6c5ce7",
+          opacity: "0.9",
+        },
+        100: {
+          transform: "translateX(700px) translateY(0px) scale(1)",
+          backgroundColor: "#00b894",
+          opacity: "1",
+        },
+      });
+
+      // Create dots
+      for (let i = 0; i < CASCADE_COUNT; i++) {
+        const dot = document.createElement("div");
+        dot.className = "cascade-dot";
+        dot.style.left = "30px";
+        dot.style.top = 60 + i * 14 + "px";
+        dot.style.width = 36 - i * 1.5 + "px";
+        dot.style.height = 36 - i * 1.5 + "px";
+        dot.style.opacity = 1 - i * 0.04;
+        cascadeStage.appendChild(dot);
+        cascadeDots.push(dot);
+      }
+
+      function cascadeLaunch(forward) {
+        // Stop all existing springs
+        cascadeSprings.forEach((s) => s.stop());
+        cascadeSprings.length = 0;
+
+        cascadeDots.forEach((dot, i) => {
+          setTimeout(() => {
+            const spring = new PhysicsEngine();
+            cascadeSprings.push(spring);
+
+            spring.on("change", ({ progress }) => {
+              const styles = cascadeFrames.getFrame(progress);
+              applyStyles(dot, styles);
+              dot.style.boxShadow = `0 4px 24px ${styles.backgroundColor}44`;
+            });
+
+            if (i === 0) {
+              spring.on("change", ({ progress }) => {
+                renderReadout(document.getElementById("cascade-readout"), {
+                  "lead dot": progress.toFixed(3),
+                  dots: CASCADE_COUNT,
+                  stagger: "60ms",
+                  state: "animating",
+                });
+              });
+              spring.on("complete", () => {
+                cascadeForward = !cascadeForward;
+                renderReadout(document.getElementById("cascade-readout"), {
+                  "lead dot": "1.000",
+                  dots: CASCADE_COUNT,
+                  stagger: "60ms",
+                  state: "settled",
+                });
+              });
+            }
+
+            if (forward) {
+              spring.animateTo(0, 1200, 20);
+            } else {
+              spring.animateTo(1200, 0, -20);
+            }
+          }, i * 60);
+        });
+      }
+
+      document.getElementById("cascade-go").addEventListener("click", () => {
+        cascadeLaunch(cascadeForward);
+      });
+
+      document.getElementById("cascade-stop").addEventListener("click", () => {
+        cascadeSprings.forEach((s) => s.stop());
+      });
+    </script>
+  </body>
+</html>
