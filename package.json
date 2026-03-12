@@ -1,11 +1,15 @@
 {
   "name": "@magic-spells/physics-engine",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A physics-based engine for fun animations.",
   "type": "module",
+  "main": "dist/physics-engine.min.js",
   "module": "dist/physics-engine.esm.js",
   "exports": {
-    ".": "./dist/physics-engine.esm.js"
+    ".": {
+      "import": "./dist/physics-engine.esm.js",
+      "require": "./dist/physics-engine.min.js"
+    }
   },
   "files": [
     "dist"
