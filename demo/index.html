@@ -128,9 +128,9 @@
 
       .hero p {
         max-width: 560px;
-        font-size: 1.05rem;
+        font-size: 1rem;
         line-height: 1.7;
-        color: var(--text-dim);
+        color: var(--text);
         opacity: 0;
         animation: fadeUp 1s ease forwards 0.65s;
       }
@@ -186,9 +186,9 @@
       }
 
       .demo-desc {
-        font-size: 0.88rem;
-        color: var(--text-dim);
-        line-height: 1.6;
+        font-size: 1rem;
+        color: var(--text);
+        line-height: 1.7;
         margin-bottom: 2rem;
         max-width: 560px;
       }
@@ -378,6 +378,59 @@
         }
       }
 
+      /* ---- Install banner ---- */
+      .install-banner {
+        display: flex;
+        justify-content: center;
+        gap: 2.5rem;
+        flex-wrap: wrap;
+        margin: 0 auto 2.5rem;
+        max-width: 680px;
+        padding: 0 1.5rem;
+        opacity: 0;
+        animation: fadeUp 1s ease forwards 0.9s;
+      }
+
+      .install-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .install-label {
+        font-family: var(--font-body);
+        font-size: 0.65rem;
+        font-weight: 400;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
+
+      .install-value {
+        font-family: "Courier New", monospace;
+        font-size: 0.88rem;
+        color: var(--cream);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.5em 1.2em;
+        user-select: all;
+        cursor: copy;
+        transition: border-color 0.3s ease;
+      }
+
+      .install-value:hover {
+        border-color: var(--gold-dim);
+      }
+
+      .install-size {
+        font-family: "Courier New", monospace;
+        font-size: 0.88rem;
+        color: var(--gold);
+        padding: 0.5em 0;
+      }
+
       /* ---- Code example ---- */
       .code-example {
         max-width: 680px;
@@ -438,6 +491,18 @@
       </p>
       <div class="hero-line"></div>
     </header>
+
+    <!-- ======== INSTALL ======== -->
+    <div class="install-banner">
+      <div class="install-item">
+        <span class="install-label">Install</span>
+        <code class="install-value">npm i @magic-spells/physics-engine</code>
+      </div>
+      <div class="install-item">
+        <span class="install-label">Size (gzip)</span>
+        <span class="install-size">~1.1 KB</span>
+      </div>
+    </div>
 
     <!-- ======== CODE EXAMPLE ======== -->
     <div class="code-example">
