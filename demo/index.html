@@ -107,6 +107,13 @@
         margin-bottom: 2.5rem;
         opacity: 0;
         animation: fadeUp 0.8s ease forwards 0.2s;
+        text-decoration: none;
+        transition: border-color 0.3s ease, color 0.3s ease;
+      }
+
+      .hero-badge:hover {
+        border-color: var(--gold-dim);
+        color: var(--cream);
       }
 
       .hero h1 {
@@ -480,7 +487,7 @@
   <body>
     <!-- ======== HERO ======== -->
     <header class="hero">
-      <div class="hero-badge">@magic-spells</div>
+      <a class="hero-badge" href="https://github.com/magic-spells/physics-engine" target="_blank" rel="noopener">@magic-spells/physics-engine</a>
       <h1>Physics<br /><em>Engine</em></h1>
       <p>
         Spring-driven animation with real physics. These demos pair Physics
