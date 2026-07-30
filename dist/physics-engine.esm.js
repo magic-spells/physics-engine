@@ -57,11 +57,11 @@ class f {
 }
 class b extends f {
   #t;
-  #m;
+  #u;
   #o;
-  #n;
-  #s;
   #e;
+  #s;
+  #n;
   #r;
   #h;
   #i;
@@ -75,7 +75,7 @@ class b extends f {
       throw new Error("Attraction must be a number between 0 and 1 (exclusive).");
     if (!Number.isFinite(i) || i <= 0 || i >= 1)
       throw new Error("Friction must be a number between 0 and 1 (exclusive).");
-    this.#t = t, this.#m = i, this.#o = 1 - i, this.#n = 0, this.#s = 0, this.#e = 0, this.isAnimating = !1, this.#r = null, this.#h = 0, this.#i = null;
+    this.#t = t, this.#u = i, this.#o = 1 - i, this.#e = 0, this.#s = 0, this.#n = 0, this.isAnimating = !1, this.#r = null, this.#h = 0, this.#i = null;
   }
   /**
    * Animates from a start value to an end value.
@@ -91,9 +91,9 @@ class b extends f {
       throw new Error("endValue must be a finite number.");
     if (!Number.isFinite(s))
       throw new Error("velocity must be a finite number.");
-    if (this.isAnimating && this.#u(), t === i && s === 0)
+    if (this.isAnimating && this.#m(), t === i && s === 0)
       return this.emit("change", { position: i, progress: 1 }), this.emit("complete", { position: i, progress: 1 }), Promise.resolve();
-    this.#s = t, this.#e = i, this.#n = s, this.isAnimating = !0, this.#r = null;
+    this.#s = t, this.#n = i, this.#e = s, this.isAnimating = !0, this.#r = null;
     const e = ++this.#h;
     return new Promise((n) => {
       this.#i = n;
@@ -105,14 +105,14 @@ class b extends f {
         }
         const o = Math.min(h - this.#r, 64) / 16.66;
         this.#r = h;
-        const l = (this.#e - this.#s) * this.#t;
-        this.#n += l * o, this.#n *= Math.pow(this.#o, o), this.#s += this.#n * o;
-        const m = this.#e - t;
-        let u = 0;
-        if (m !== 0 && (u = (this.#s - t) / m), this.emit("change", { position: this.#s, progress: u }), Math.abs(this.#s - this.#e) < 0.01 && Math.abs(this.#n) < 0.01) {
+        const a = (this.#n - this.#s) * this.#t;
+        this.#e += a * o, this.#e *= Math.pow(this.#o, o), this.#s += this.#e * o;
+        const u = this.#n - t;
+        let m = 0;
+        if (u !== 0 && (m = (this.#s - t) / u), this.emit("change", { position: this.#s, progress: m }), Math.abs(this.#s - this.#n) < 0.01 && Math.abs(this.#e) < 0.01) {
           this.isAnimating = !1;
           const c = this.#i;
-          this.#i = null, this.emit("change", { position: this.#e, progress: 1 }), this.emit("complete", { position: this.#e, progress: 1 }), c();
+          this.#i = null, this.emit("change", { position: this.#n, progress: 1 }), this.emit("complete", { position: this.#n, progress: 1 }), c();
           return;
         }
         requestAnimationFrame(r);
@@ -124,7 +124,7 @@ class b extends f {
    * Internal stop — resolves Promise without emitting 'stop'.
    * Used when a new animateTo supersedes the current one.
    */
-  #u() {
+  #m() {
     this.isAnimating = !1, this.#i && (this.#i(), this.#i = null);
   }
   /**
@@ -136,6 +136,15 @@ class b extends f {
     this.isAnimating = !1, this.#h++;
     const t = this.#i;
     this.#i = null, this.emit("stop", { position: this.#s }), t && t();
+  }
+  /**
+   * Gets the current velocity, in units per 16.66ms frame.
+   * Same units animateTo() accepts, so it can be handed straight back in
+   * to retarget an animation without losing momentum.
+   * @returns {number} The current velocity.
+   */
+  getVelocity() {
+    return this.#e;
   }
   /**
    * Sets the attraction value
@@ -153,7 +162,7 @@ class b extends f {
   setFriction(t) {
     if (!Number.isFinite(t) || t <= 0 || t >= 1)
       throw new Error("Friction must be a number between 0 and 1 (exclusive).");
-    this.#m = t, this.#o = 1 - t;
+    this.#u = t, this.#o = 1 - t;
   }
 }
 export {

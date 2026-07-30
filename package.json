@@ -1,6 +1,6 @@
 {
   "name": "@magic-spells/physics-engine",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A physics-based engine for fun animations.",
   "type": "module",
   "main": "dist/physics-engine.min.js",

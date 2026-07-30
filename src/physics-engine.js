@@ -172,6 +172,16 @@ export default class PhysicsEngine extends EventEmitter {
 	}
 
 	/**
+	 * Gets the current velocity, in units per 16.66ms frame.
+	 * Same units animateTo() accepts, so it can be handed straight back in
+	 * to retarget an animation without losing momentum.
+	 * @returns {number} The current velocity.
+	 */
+	getVelocity() {
+		return this.#velocity;
+	}
+
+	/**
 	 * Sets the attraction value
 	 * @param {number} attraction - The attraction value for physics-based animation (0 < attraction < 1).
 	 */
