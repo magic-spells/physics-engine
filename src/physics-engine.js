@@ -217,9 +217,10 @@ export default class PhysicsEngine extends EventEmitter {
 				if (!this.isAnimating) return;
 
 				// The first frame seeds the clock at elapsed 0. It still emits: the
-				// old engine returned silently here, so the spring produced nothing
-				// on its first frame and the whole animation ran a frame late — by a
-				// different amount on every refresh rate.
+				// old engine returned silently here because a delta needs a previous
+				// timestamp to exist, so the spring painted nothing on its first
+				// frame. That was a missing initial paint, not a timing shift — both
+				// versions measure elapsed time from the first rAF.
 				if (this.#startTime === null) this.#startTime = time;
 
 				const frames = (time - this.#startTime) / FRAME_MS;
@@ -237,6 +238,12 @@ export default class PhysicsEngine extends EventEmitter {
 
 				// Emit change event
 				this.emit('change', { position: this.#currentValue, progress });
+
+				// A listener is free to call stop() or animateTo() during that emit.
+				// Both invalidate this frame's claim on the animation — without this
+				// guard, the settle branch below would resolve a Promise that is no
+				// longer ours (or null, which throws).
+				if (animationId !== this.#animationId || !this.isAnimating) return;
 
 				// Check if animation is complete (both position and velocity settled)
 				if (Math.abs(displacement) < 0.01 && Math.abs(this.#velocity) < 0.01) {

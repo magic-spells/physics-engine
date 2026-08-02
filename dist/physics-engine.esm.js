@@ -25,8 +25,8 @@ class g {
   off(t, i) {
     const s = this.#t.get(t);
     if (!s) return this;
-    const o = s.indexOf(i);
-    return o !== -1 && (s.splice(o, 1), s.length === 0 ? this.#t.delete(t) : this.#t.set(t, s)), this;
+    const r = s.indexOf(i);
+    return r !== -1 && (s.splice(r, 1), s.length === 0 ? this.#t.delete(t) : this.#t.set(t, s)), this;
   }
   /**
    * Triggers an event and calls all bound listeners.
@@ -37,12 +37,12 @@ class g {
   emit(t, ...i) {
     const s = this.#t.get(t);
     if (!s || s.length === 0) return !1;
-    const o = s.slice();
-    for (let e = 0, n = o.length; e < n; ++e)
+    const r = s.slice();
+    for (let e = 0, n = r.length; e < n; ++e)
       try {
-        o[e].apply(this, i);
-      } catch (r) {
-        console.error(`Error in listener for event '${t}':`, r);
+        r[e].apply(this, i);
+      } catch (o) {
+        console.error(`Error in listener for event '${t}':`, o);
       }
     return !0;
   }
@@ -62,9 +62,9 @@ class d extends g {
   #n;
   #s;
   #e;
-  #o;
-  #r;
   #h;
+  #r;
+  #o;
   #i;
   #u;
   /**
@@ -77,7 +77,7 @@ class d extends g {
       throw new Error("Attraction must be a number between 0 and 1 (exclusive).");
     if (!Number.isFinite(i) || i <= 0 || i >= 1)
       throw new Error("Friction must be a number between 0 and 1 (exclusive).");
-    this.#t = t, this.#a = i, this.#n = 0, this.#s = 0, this.#e = 0, this.#o = 0, this.isAnimating = !1, this.#r = null, this.#h = 0, this.#i = null, this.#u = null;
+    this.#t = t, this.#a = i, this.#n = 0, this.#s = 0, this.#e = 0, this.#h = 0, this.isAnimating = !1, this.#r = null, this.#o = 0, this.#i = null, this.#u = null;
   }
   /**
    * Solves the spring for the current parameters and initial conditions.
@@ -118,10 +118,10 @@ class d extends g {
         b: (i + e * s * t) / u
       };
     }
-    const n = s * Math.sqrt(e * e - 1), r = -e * s + n, h = -e * s - n, a = (i - h * t) / (r - h);
+    const n = s * Math.sqrt(e * e - 1), o = -e * s + n, h = -e * s - n, a = (i - h * t) / (o - h);
     return {
       regime: "over",
-      root1: r,
+      root1: o,
       root2: h,
       a,
       b: t - a
@@ -142,16 +142,16 @@ class d extends g {
       };
     }
     if (i.regime === "under") {
-      const { naturalFrequency: e, dampingRatio: n, dampedFrequency: r, a: h, b: a } = i, u = Math.exp(-n * e * t), c = Math.cos(r * t), l = Math.sin(r * t);
+      const { naturalFrequency: e, dampingRatio: n, dampedFrequency: o, a: h, b: a } = i, u = Math.exp(-n * e * t), c = Math.cos(o * t), l = Math.sin(o * t);
       return {
         displacement: u * (h * c + a * l),
-        velocity: u * ((a * r - n * e * h) * c - (h * r + n * e * a) * l)
+        velocity: u * ((a * o - n * e * h) * c - (h * o + n * e * a) * l)
       };
     }
-    const s = i.a * Math.exp(i.root1 * t), o = i.b * Math.exp(i.root2 * t);
+    const s = i.a * Math.exp(i.root1 * t), r = i.b * Math.exp(i.root2 * t);
     return {
-      displacement: s + o,
-      velocity: i.root1 * s + i.root2 * o
+      displacement: s + r,
+      velocity: i.root1 * s + i.root2 * r
     };
   }
   /**
@@ -183,24 +183,26 @@ class d extends g {
       throw new Error("velocity must be a finite number.");
     if (this.isAnimating && this.#f(), t === i && s === 0)
       return this.emit("change", { position: i, progress: 1 }), this.emit("complete", { position: i, progress: 1 }), Promise.resolve();
-    this.#s = t, this.#o = t, this.#e = i, this.#n = s, this.isAnimating = !0, this.#c(null);
-    const o = ++this.#h;
+    this.#s = t, this.#h = t, this.#e = i, this.#n = s, this.isAnimating = !0, this.#c(null);
+    const r = ++this.#o;
     return new Promise((e) => {
       this.#i = e;
-      const n = (r) => {
-        if (o !== this.#h || !this.isAnimating) return;
-        this.#r === null && (this.#r = r);
-        const h = (r - this.#r) / p, { displacement: a, velocity: u } = this.#m(h);
+      const n = (o) => {
+        if (r !== this.#o || !this.isAnimating) return;
+        this.#r === null && (this.#r = o);
+        const h = (o - this.#r) / p, { displacement: a, velocity: u } = this.#m(h);
         this.#s = this.#e + a, this.#n = u;
-        const c = this.#e - this.#o;
+        const c = this.#e - this.#h;
         let l = 0;
-        if (c !== 0 && (l = (this.#s - this.#o) / c), this.emit("change", { position: this.#s, progress: l }), Math.abs(a) < 0.01 && Math.abs(this.#n) < 0.01) {
-          this.isAnimating = !1;
-          const f = this.#i;
-          this.#i = null, this.emit("change", { position: this.#e, progress: 1 }), this.emit("complete", { position: this.#e, progress: 1 }), f();
-          return;
+        if (c !== 0 && (l = (this.#s - this.#h) / c), this.emit("change", { position: this.#s, progress: l }), !(r !== this.#o || !this.isAnimating)) {
+          if (Math.abs(a) < 0.01 && Math.abs(this.#n) < 0.01) {
+            this.isAnimating = !1;
+            const f = this.#i;
+            this.#i = null, this.emit("change", { position: this.#e, progress: 1 }), this.emit("complete", { position: this.#e, progress: 1 }), f();
+            return;
+          }
+          requestAnimationFrame(n);
         }
-        requestAnimationFrame(n);
       };
       requestAnimationFrame(n);
     });
@@ -218,7 +220,7 @@ class d extends g {
    */
   stop() {
     if (!this.isAnimating) return;
-    this.isAnimating = !1, this.#h++;
+    this.isAnimating = !1, this.#o++;
     const t = this.#i;
     this.#i = null, this.emit("stop", { position: this.#s }), t && t();
   }

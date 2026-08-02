@@ -11,6 +11,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import PhysicsEngine from '../src/physics-engine.js';
 import { run, at, interpolateAt, PROFILES, PARAM_SETS } from './harness.js';
 
 /** Positions must agree to this much of the span (1% of a 100-unit move). */
@@ -79,8 +80,9 @@ test('settle time does not depend on the span', { todo: true }, async () => {
 
 test('the first frame emits at elapsed zero', async () => {
 	// The old engine consumed its first rAF purely to seed a timestamp and
-	// returned without emitting, so the animation started a frame late — by a
-	// different amount on every refresh rate. Asserting "has moved within 16.67ms"
+	// returned without emitting — a missing initial paint, not a timing shift,
+	// since both versions measure elapsed from the first rAF. Asserting "has
+	// moved within 16.67ms"
 	// would be unfair instead: at 30fps the first frame after t=0 lands at
 	// 33.33ms, and no engine can paint sooner than the display allows. What we
 	// can require is that frame one reports the start position rather than
@@ -101,6 +103,31 @@ test('a spring from rest is scale-invariant', async () => {
 	const normalized = runs.map((r, i) => at(r.samples, 300) / [1, 100, 1200][i]);
 	const spread = Math.max(...normalized) - Math.min(...normalized);
 	assert.ok(spread < 1e-9, `normalized position at 300ms varies by ${spread}`);
+});
+
+test('a change listener may stop() on the settling frame', async () => {
+	// A span of 0.005 satisfies the settle check on the very first frame, so the
+	// stop() issued from inside that frame's 'change' emit lands exactly where
+	// the engine is about to resolve. Before the post-emit guard, the settle
+	// branch then called the already-nulled resolve and threw.
+	const queue = [];
+	const realRAF = globalThis.requestAnimationFrame;
+	globalThis.requestAnimationFrame = (fn) => queue.push(fn);
+	try {
+		const engine = new PhysicsEngine(PARAM_SETS.bouncy);
+		let stops = 0;
+		engine.on('change', () => engine.stop());
+		engine.on('stop', () => stops++);
+		const done = engine.animateTo(0, 0.005);
+		let time = 0;
+		while (queue.length) queue.shift()((time += 16.66));
+		await done;
+		assert.equal(stops, 1, 'stop should fire exactly once');
+		assert.equal(engine.isAnimating, false);
+	} finally {
+		if (realRAF) globalThis.requestAnimationFrame = realRAF;
+		else delete globalThis.requestAnimationFrame;
+	}
 });
 
 test('a spring settles at its target', async () => {
