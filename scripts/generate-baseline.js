@@ -6,13 +6,18 @@
  * Re-running it after a change overwrites the evidence — that is the point of
  * committing it, so a rewrite has to be a deliberate act.
  *
- *   node test/generate-baseline.js
+ *   npm run baseline
+ *
+ * This lives in scripts/ rather than test/ for exactly that reason: `node --test`
+ * executes every file under test/, so while it sat there `npm test` silently ran
+ * it and rewrote the fixture with whatever the engine currently does — quietly
+ * destroying the evidence the golden-master test exists to preserve.
  */
 
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { run, at, PROFILES, SAMPLE_TIMES, PARAM_SETS } from './harness.js';
+import { run, at, PROFILES, SAMPLE_TIMES, PARAM_SETS } from '../test/harness.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -54,7 +59,7 @@ for (const [paramName, params] of Object.entries(PARAM_SETS)) {
 	}
 }
 
-mkdirSync(resolve(__dirname, 'fixtures'), { recursive: true });
-const path = resolve(__dirname, 'fixtures/baseline.json');
+mkdirSync(resolve(__dirname, '../test/fixtures'), { recursive: true });
+const path = resolve(__dirname, '../test/fixtures/baseline.json');
 writeFileSync(path, `${JSON.stringify(out, null, '\t')}\n`);
 console.log(`wrote ${Object.keys(out.results).length} cases to ${path}`);

@@ -120,6 +120,35 @@ export function at(samples, ms) {
 	return out;
 }
 
+/**
+ * Position at an absolute elapsed time, linearly interpolated between the
+ * bracketing samples.
+ *
+ * `at()` steps back to the previous sample, which is right for fixture
+ * comparison but wrong for comparing two frame profiles: their samples land at
+ * different instants, so a step-back lookup compares x(100ms) against x(97.2ms)
+ * and reports the gap as an engine difference. Interpolating removes that,
+ * leaving only the interpolation error itself — keep the reference profile dense
+ * so that stays negligible.
+ *
+ * @param {Array<[number, number]>} samples
+ * @param {number} ms
+ * @returns {number}
+ */
+export function interpolateAt(samples, ms) {
+	if (!samples.length) return 0;
+	if (ms <= samples[0][0]) return samples[0][1];
+
+	for (let i = 1; i < samples.length; i++) {
+		const [t1, p1] = samples[i];
+		if (t1 < ms) continue;
+		const [t0, p0] = samples[i - 1];
+		if (t1 === t0) return p1;
+		return p0 + ((p1 - p0) * (ms - t0)) / (t1 - t0);
+	}
+	return samples[samples.length - 1][1];
+}
+
 /** Absolute times every run is sampled at, for fixture comparison. */
 export const SAMPLE_TIMES = [50, 100, 150, 200, 300, 400, 500, 700, 1000, 1500, 2000];
 
