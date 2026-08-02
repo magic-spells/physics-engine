@@ -1,17 +1,28 @@
 
 import EventEmitter from './event-emitter.js';
 
+/**
+ * One frame at the 60fps baseline, in ms. Time is measured in frames throughout
+ * so that `attraction`, `friction` and the velocity `animateTo()` accepts all
+ * keep the per-frame units they have always had.
+ */
+const FRAME_MS = 16.66;
+
+/** Below this, |damping ratio - 1| is treated as critically damped. */
+const CRITICAL_EPSILON = 1e-9;
+
 export default class PhysicsEngine extends EventEmitter {
 
 	#attraction;
 	#friction;
-	#frictionFactor;
 	#velocity;
 	#currentValue;
 	#targetValue;
-	#prevTime;
+	#startValue;
+	#startTime;
 	#animationId;
 	#resolve;
+	#coefficients;
 
 	/**
 	 * Creates an instance of PhysicsEngine.
@@ -32,24 +43,134 @@ export default class PhysicsEngine extends EventEmitter {
 
 		this.#attraction = attraction;
 		this.#friction = friction;
-		this.#frictionFactor = 1 - friction;
 
 		this.#velocity = 0;
 		this.#currentValue = 0;
 		this.#targetValue = 0;
+		this.#startValue = 0;
 
 		this.isAnimating = false;
-		this.#prevTime = null;
+		this.#startTime = null;
 
 		this.#animationId = 0;
 		this.#resolve = null;
+		this.#coefficients = null;
+	}
+
+	/**
+	 * Solves the spring for the current parameters and initial conditions.
+	 *
+	 * The engine used to integrate the spring one frame at a time, which made the
+	 * trajectory depend on how the frames happened to land: a 144Hz display and a
+	 * 30Hz display took measurably different paths, and a dropped frame stretched
+	 * the animation. A damped harmonic oscillator has an exact solution, so we
+	 * solve it once and evaluate at absolute elapsed time instead. Frame rate,
+	 * frame-time jitter and stalls then only decide when we *sample* the motion,
+	 * never what the motion is.
+	 *
+	 * Reading the old recurrence as an ODE in frame-time gives the mapping:
+	 * `v += attraction * (target - x)` is the spring constant, and `v *= 1 - friction`
+	 * is exponential decay at rate `-ln(1 - friction)` per frame.
+	 *
+	 * @param {number} displacement - Current position minus target.
+	 * @param {number} velocity - Current velocity, in units per frame.
+	 * @returns {Object} Coefficients consumed by #solve.
+	 */
+	#deriveCoefficients(displacement, velocity) {
+		const naturalFrequency = Math.sqrt(this.#attraction);
+		const dampingRate = -Math.log(1 - this.#friction);
+		const dampingRatio = dampingRate / (2 * naturalFrequency);
+
+		if (Math.abs(dampingRatio - 1) < CRITICAL_EPSILON) {
+			return {
+				regime: 'critical',
+				naturalFrequency,
+				a: displacement,
+				b: velocity + naturalFrequency * displacement,
+			};
+		}
+
+		if (dampingRatio < 1) {
+			const dampedFrequency = naturalFrequency * Math.sqrt(1 - dampingRatio * dampingRatio);
+			return {
+				regime: 'under',
+				naturalFrequency,
+				dampingRatio,
+				dampedFrequency,
+				a: displacement,
+				b: (velocity + dampingRatio * naturalFrequency * displacement) / dampedFrequency,
+			};
+		}
+
+		const spread = naturalFrequency * Math.sqrt(dampingRatio * dampingRatio - 1);
+		const root1 = -dampingRatio * naturalFrequency + spread;
+		const root2 = -dampingRatio * naturalFrequency - spread;
+		const a = (velocity - root2 * displacement) / (root1 - root2);
+		return {
+			regime: 'over',
+			root1,
+			root2,
+			a,
+			b: displacement - a,
+		};
+	}
+
+	/**
+	 * Evaluates displacement and velocity at a time offset.
+	 * @param {number} frames - Elapsed time, in 16.66ms frames.
+	 * @returns {{displacement: number, velocity: number}}
+	 */
+	#solve(frames) {
+		const c = this.#coefficients;
+
+		if (c.regime === 'critical') {
+			const decay = Math.exp(-c.naturalFrequency * frames);
+			const linear = c.a + c.b * frames;
+			return {
+				displacement: decay * linear,
+				velocity: decay * (c.b - c.naturalFrequency * linear),
+			};
+		}
+
+		if (c.regime === 'under') {
+			const { naturalFrequency: wn, dampingRatio: z, dampedFrequency: wd, a, b } = c;
+			const decay = Math.exp(-z * wn * frames);
+			const cos = Math.cos(wd * frames);
+			const sin = Math.sin(wd * frames);
+			return {
+				displacement: decay * (a * cos + b * sin),
+				velocity: decay * ((b * wd - z * wn * a) * cos - (a * wd + z * wn * b) * sin),
+			};
+		}
+
+		const first = c.a * Math.exp(c.root1 * frames);
+		const second = c.b * Math.exp(c.root2 * frames);
+		return {
+			displacement: first + second,
+			velocity: c.root1 * first + c.root2 * second,
+		};
+	}
+
+	/**
+	 * Re-solves from the current position and velocity, restarting the clock.
+	 * Used when the parameters change mid-flight — the coefficients are baked at
+	 * solve time, so a changed spring has to become a new initial-value problem
+	 * rather than being picked up on the next frame.
+	 * @param {number} time - Current rAF timestamp, or null to seed on next frame.
+	 */
+	#reseed(time) {
+		this.#coefficients = this.#deriveCoefficients(
+			this.#currentValue - this.#targetValue,
+			this.#velocity
+		);
+		this.#startTime = time;
 	}
 
 	/**
 	 * Animates from a start value to an end value.
 	 * @param {number} startValue - The starting value.
 	 * @param {number} endValue - The target value.
-	 * @param {number} [velocity=0] - Initial velocity.
+	 * @param {number} [velocity=0] - Initial velocity, in units per 16.66ms frame.
 	 * @returns {Promise} Resolves when animation completes or is stopped.
 	 */
 	animateTo(startValue, endValue, velocity = 0) {
@@ -78,10 +199,11 @@ export default class PhysicsEngine extends EventEmitter {
 		}
 
 		this.#currentValue = startValue;
+		this.#startValue = startValue;
 		this.#targetValue = endValue;
 		this.#velocity = velocity;
 		this.isAnimating = true;
-		this.#prevTime = null;
+		this.#reseed(null);
 
 		// Increment animation ID to invalidate any previous rAF callbacks
 		const animationId = ++this.#animationId;
@@ -94,41 +216,30 @@ export default class PhysicsEngine extends EventEmitter {
 				if (animationId !== this.#animationId) return;
 				if (!this.isAnimating) return;
 
-				if (this.#prevTime === null) {
-					this.#prevTime = time;
-					requestAnimationFrame(animate);
-					return;
-				}
+				// The first frame seeds the clock at elapsed 0. It still emits: the
+				// old engine returned silently here, so the spring produced nothing
+				// on its first frame and the whole animation ran a frame late — by a
+				// different amount on every refresh rate.
+				if (this.#startTime === null) this.#startTime = time;
 
-				const timeDelta = Math.min(time - this.#prevTime, 64);
-				const timeDeltaFactor = timeDelta / 16.66; // Assuming 60 FPS baseline
+				const frames = (time - this.#startTime) / FRAME_MS;
+				const { displacement, velocity: currentVelocity } = this.#solve(frames);
 
-				this.#prevTime = time;
-
-				// Calculate attraction force
-				const force = (this.#targetValue - this.#currentValue) * this.#attraction;
-
-				// Update velocity
-				this.#velocity += (force * timeDeltaFactor);
-
-				// Apply friction
-				this.#velocity *= Math.pow(this.#frictionFactor, timeDeltaFactor);
-
-				// Update current value
-				this.#currentValue += this.#velocity * timeDeltaFactor;
+				this.#currentValue = this.#targetValue + displacement;
+				this.#velocity = currentVelocity;
 
 				// Calculate progress
-				const totalDistance = this.#targetValue - startValue;
+				const totalDistance = this.#targetValue - this.#startValue;
 				let progress = 0;
 				if (totalDistance !== 0) {
-					progress = (this.#currentValue - startValue) / totalDistance;
+					progress = (this.#currentValue - this.#startValue) / totalDistance;
 				}
 
 				// Emit change event
 				this.emit('change', { position: this.#currentValue, progress });
 
 				// Check if animation is complete (both position and velocity settled)
-				if (Math.abs(this.#currentValue - this.#targetValue) < 0.01 && Math.abs(this.#velocity) < 0.01) {
+				if (Math.abs(displacement) < 0.01 && Math.abs(this.#velocity) < 0.01) {
 					this.isAnimating = false;
 					const pendingResolve = this.#resolve;
 					this.#resolve = null;
@@ -190,6 +301,7 @@ export default class PhysicsEngine extends EventEmitter {
 			throw new Error('Attraction must be a number between 0 and 1 (exclusive).');
 		}
 		this.#attraction = attraction;
+		if (this.isAnimating) this.#reseed(null);
 	}
 
 	/**
@@ -201,6 +313,6 @@ export default class PhysicsEngine extends EventEmitter {
 			throw new Error('Friction must be a number between 0 and 1 (exclusive).');
 		}
 		this.#friction = friction;
-		this.#frictionFactor = 1 - friction;
+		if (this.isAnimating) this.#reseed(null);
 	}
 }

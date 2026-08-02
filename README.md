@@ -108,7 +108,13 @@ All three methods return the instance for chaining.
 
 ## How it works
 
-Each frame the engine computes a spring force (`(target - current) * attraction`), adds it to the velocity, damps the velocity by friction, and advances the position. The time delta is normalized to a 16.66ms baseline so the spring behaves consistently across different frame rates. The animation settles when both position and velocity are within 0.01 of the target.
+The engine solves the damped harmonic oscillator analytically and evaluates it at the elapsed time on every frame. `attraction` is the spring constant and `friction` is the per-frame velocity decay; together they give a natural frequency of `√attraction` and a damping ratio of `−ln(1 − friction) / (2√attraction)`, so all three regimes — underdamped, critically damped and overdamped — are covered. The animation settles when both position and velocity are within 0.01 of the target.
+
+Because position is a function of elapsed time rather than an accumulation of per-frame steps, the trajectory does not depend on how the frames land. A 30Hz display, a 144Hz display and a page that drops a frame all follow the same path; refresh rate only decides how often that path is sampled.
+
+Time is measured in 16.66ms units, which is what makes `attraction`, `friction` and the velocity `animateTo()` accepts frame-relative quantities rather than per-second ones.
+
+> **Changed in 1.1.0.** Earlier versions integrated the spring one frame at a time and scaled each step by the frame delta. That made the motion depend on refresh rate — overshoot measured about 3% lower at 30Hz than at 144Hz — and a single dropped frame stretched the animation, because deltas were clamped at 64ms and the excess was discarded. Curves are very slightly springier now: the old integrator consistently undershot the true solution.
 
 ## License
 

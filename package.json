@@ -1,6 +1,6 @@
 {
 	"name": "@magic-spells/physics-engine",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"description": "A physics-based engine for fun animations.",
 	"type": "module",
 	"main": "dist/physics-engine.min.js",
@@ -18,7 +18,9 @@
 		"build": "vite build",
 		"dev": "vite",
 		"prod": "vite build --watch",
-		"test": "node --test"
+		"test": "node --test test/*.test.js",
+		"baseline": "node scripts/generate-baseline.js",
+		"report": "node scripts/report.js"
 	},
 	"author": "Cory Schulz",
 	"license": "MIT",
