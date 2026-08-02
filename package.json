@@ -1,35 +1,36 @@
 {
-  "name": "@magic-spells/physics-engine",
-  "version": "1.0.1",
-  "description": "A physics-based engine for fun animations.",
-  "type": "module",
-  "main": "dist/physics-engine.min.js",
-  "module": "dist/physics-engine.esm.js",
-  "exports": {
-    ".": {
-      "import": "./dist/physics-engine.esm.js",
-      "require": "./dist/physics-engine.min.js"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite",
-    "prod": "vite build --watch"
-  },
-  "author": "Cory Schulz",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/magic-spells/physics-engine.git"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "devDependencies": {
-    "vite": "^7.3.1"
-  }
+	"name": "@magic-spells/physics-engine",
+	"version": "1.0.1",
+	"description": "A physics-based engine for fun animations.",
+	"type": "module",
+	"main": "dist/physics-engine.min.js",
+	"module": "dist/physics-engine.esm.js",
+	"exports": {
+		".": {
+			"import": "./dist/physics-engine.esm.js",
+			"require": "./dist/physics-engine.min.js"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "vite build",
+		"dev": "vite",
+		"prod": "vite build --watch",
+		"test": "node --test"
+	},
+	"author": "Cory Schulz",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/magic-spells/physics-engine.git"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"devDependencies": {
+		"vite": "^7.3.1"
+	}
 }
