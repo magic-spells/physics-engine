@@ -1,0 +1,27 @@
+spring: attraction 0.08, friction 0.22, 0 → 100
+
+FRAME RATE
+  profile |  p@100ms |  p@300ms |  p@500ms |     peak | settle ms
+        fps30 |  74.6680 | 106.6272 |  98.3125 | 121.4112 |      1167
+        fps60 |  74.6680 | 106.6272 |  98.3125 | 121.4112 |      1150
+       fps120 |  74.6680 | 106.6272 |  98.3125 | 121.5083 |      1142
+       fps144 |  74.6325 | 106.6315 |  98.3125 | 121.5083 |      1139
+
+JITTER (all ~16.66ms mean)
+  profile |  p@100ms |  p@300ms |  p@500ms |     peak | settle ms
+        fps60 |  74.6680 | 106.6272 |  98.3125 | 121.4112 |      1150
+  alternating |  74.6657 | 106.6284 |  98.3121 | 121.4081 |      1150
+       wobble |  74.5775 | 106.6327 |  98.3112 | 121.4025 |      1152
+       random |  74.6632 | 106.6656 |  98.3096 | 121.4073 |      1138
+        stall |  74.6657 | 106.6284 |  98.3096 | 121.4081 |      1136
+
+SPAN (normalized — shape is scale-invariant, duration is not)
+     span | norm@300ms | settle ms
+        1 |   1.066272 |       517
+      100 |   1.066272 |      1150
+     1200 |   1.066272 |      1383
+
+FIRST FRAME
+        fps30: first movement at 33.33ms
+        fps60: first movement at 16.67ms
+       fps144: first movement at 6.94ms
