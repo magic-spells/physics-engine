@@ -73,7 +73,7 @@ var t = 16.66, n = 1e-9, r = class extends e {
 		if (!Number.isFinite(e)) throw Error("startValue must be a finite number.");
 		if (!Number.isFinite(n)) throw Error("endValue must be a finite number.");
 		if (!Number.isFinite(r)) throw Error("velocity must be a finite number.");
-		if (this.isAnimating && this.#p(), e === n && r === 0) return this.emit("change", {
+		if (this.isAnimating && this.#p(), e === n && r === 0) return this.#r = n, this.#a = e, this.#i = n, this.#n = 0, this.emit("change", {
 			position: n,
 			progress: 1
 		}), this.emit("complete", {
@@ -95,7 +95,7 @@ var t = 16.66, n = 1e-9, r = class extends e {
 					progress: c
 				}), !(i !== this.#s || !this.isAnimating)) {
 					if (Math.abs(a) < .01 && Math.abs(this.#n) < .01) {
-						this.isAnimating = !1;
+						this.isAnimating = !1, this.#r = this.#i, this.#n = 0;
 						let e = this.#c;
 						this.#c = null, this.emit("change", {
 							position: this.#i,
