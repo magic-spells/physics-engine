@@ -33,7 +33,7 @@ const CASES = [
 const round = (n) => Number(n.toFixed(6));
 
 const out = {
-	note: 'Behaviour of physics-engine 1.1.0, the analytic damped-oscillator solver. Do not regenerate casually.',
+	note: 'Behaviour of physics-engine 2.0.0, the analytic damped-oscillator solver. Do not regenerate casually.',
 	sampleTimes: SAMPLE_TIMES,
 	results: {},
 };

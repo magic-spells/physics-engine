@@ -148,10 +148,10 @@ Time is measured in 16.66ms units, which is what makes `attraction`, `friction` 
 > been removed, so CommonJS consumers must either move to `import` or load the UMD
 > build directly. `EventEmitter` is no longer vendored into the source; it is now a
 > dependency on `@magic-spells/event-emitter`, which npm installs automatically.
-> Behaviour of the spring itself is unchanged from 1.1.0. Also in this release:
-> TypeScript definitions, and a Vite 8 two-pass build.
+> Also in this release: the analytic solver described below, TypeScript
+> definitions, and a Vite 8 two-pass build.
 
-> **Changed in 1.1.0.** Earlier versions integrated the spring one frame at a time and scaled each step by the frame delta. That made the motion depend on refresh rate — overshoot measured about 3% lower at 30Hz than at 144Hz — and a single dropped frame stretched the animation, because deltas were clamped at 64ms and the excess was discarded. Curves are very slightly springier now: the old integrator consistently undershot the true solution.
+> **Frame-rate independence (2.0.0).** Earlier versions integrated the spring one frame at a time and scaled each step by the frame delta. That made the motion depend on refresh rate — overshoot measured about 3% lower at 30Hz than at 144Hz — and a single dropped frame stretched the animation, because deltas were clamped at 64ms and the excess was discarded. Curves are very slightly springier now: the old integrator consistently undershot the true solution.
 
 ## License
 

@@ -28,7 +28,7 @@
 
 ## Architecture
 
-**Analytic damped harmonic oscillator** (changed in 1.1.0 — earlier versions integrated per frame). `#deriveCoefficients` converts `attraction` and `friction` into a natural frequency `√attraction` and damping ratio `−ln(1 − friction) / (2√attraction)`, then solves the closed form for the underdamped, critically damped, or overdamped regime. `#solve(frames)` evaluates that solution at an elapsed time; each frame just samples it.
+**Analytic damped harmonic oscillator** (changed in 2.0.0 — earlier versions integrated per frame). `#deriveCoefficients` converts `attraction` and `friction` into a natural frequency `√attraction` and damping ratio `−ln(1 − friction) / (2√attraction)`, then solves the closed form for the underdamped, critically damped, or overdamped regime. `#solve(frames)` evaluates that solution at an elapsed time; each frame just samples it.
 
 Because position is a function of elapsed time rather than an accumulation of steps, the trajectory is frame-rate independent: 30Hz, 144Hz, and a dropped frame all follow the same path, and refresh rate only decides sampling density. Time is measured in 16.66ms units, which is what makes `attraction`, `friction`, and velocity frame-relative rather than per-second quantities.
 
@@ -55,6 +55,6 @@ Animation settles when both position and velocity are within 0.01 of the target.
 `npm test` runs two suites against the deterministic harness in `test/harness.js`:
 
 - `test/consistency.test.js` — the correctness suite. Asserts frame-rate independence, jitter and dropped-frame tolerance, scale invariance, settle behaviour, and that a `change` listener may call `stop()` on the settling frame.
-- `test/baseline.test.js` — a **golden master pinned to v1.0.1**, bugs included. It is not a correctness test; its job is to make behavioural change visible and deliberate. The 1.1.0 analytic rewrite intentionally changed these trajectories, so these cases fail until the fixture is regenerated with `npm run baseline`. Regenerate only once each failure is one you can explain.
+- `test/baseline.test.js` — a **golden master pinned to the 2.0.0 analytic solver**. It is not a correctness test; its job is to make behavioural change visible and deliberate. If it goes red, the trajectories moved — regenerate with `npm run baseline` only once each failure is one you can explain.
 
 Use the demo page (`npm run dev`) for manual/visual testing.
