@@ -2,7 +2,7 @@
  * Human-readable summary of the invariants under test. Run before and after the
  * frame-rate work to see what moved:
  *
- *   node test/report.js
+ *   npm run report
  */
 
 import { run, interpolateAt, PROFILES, PARAM_SETS } from '../test/harness.js';

@@ -1,8 +1,8 @@
 /**
  * Records the CURRENT engine's behaviour to test/fixtures/baseline.json.
  *
- * Run this once against the unmodified engine, commit the fixture, then leave
- * it alone: it is the before-picture the frame-rate work is measured against.
+ * Run this once against the engine as it stands, commit the fixture, then leave
+ * it alone: it is the reference picture every later change is measured against.
  * Re-running it after a change overwrites the evidence — that is the point of
  * committing it, so a rewrite has to be a deliberate act.
  *
@@ -33,7 +33,7 @@ const CASES = [
 const round = (n) => Number(n.toFixed(6));
 
 const out = {
-	note: 'Behaviour of physics-engine BEFORE the frame-rate independence work. Do not regenerate casually.',
+	note: 'Behaviour of physics-engine 1.1.0, the analytic damped-oscillator solver. Do not regenerate casually.',
 	sampleTimes: SAMPLE_TIMES,
 	results: {},
 };

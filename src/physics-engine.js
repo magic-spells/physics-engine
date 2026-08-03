@@ -1,5 +1,5 @@
 
-import EventEmitter from './event-emitter.js';
+import EventEmitter from '@magic-spells/event-emitter';
 
 /**
  * One frame at the 60fps baseline, in ms. Time is measured in frames throughout
@@ -193,6 +193,12 @@ export default class PhysicsEngine extends EventEmitter {
 
 		// Early return if already at target with no velocity
 		if (startValue === endValue && velocity === 0) {
+			// Settle the internal state before emitting: otherwise the getters keep
+			// reporting whatever the previous animation left behind.
+			this.#currentValue = endValue;
+			this.#startValue = startValue;
+			this.#targetValue = endValue;
+			this.#velocity = 0;
 			this.emit('change', { position: endValue, progress: 1 });
 			this.emit('complete', { position: endValue, progress: 1 });
 			return Promise.resolve();
@@ -248,6 +254,11 @@ export default class PhysicsEngine extends EventEmitter {
 				// Check if animation is complete (both position and velocity settled)
 				if (Math.abs(displacement) < 0.01 && Math.abs(this.#velocity) < 0.01) {
 					this.isAnimating = false;
+					// Snap internal state to match what the settle events report, so
+					// getVelocity() and the emitted position agree after completion
+					// instead of leaking the sub-threshold solver residuals.
+					this.#currentValue = this.#targetValue;
+					this.#velocity = 0;
 					const pendingResolve = this.#resolve;
 					this.#resolve = null;
 					this.emit('change', { position: this.#targetValue, progress: 1 });

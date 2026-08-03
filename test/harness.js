@@ -34,7 +34,8 @@ export const PROFILES = {
 		const x = Math.sin((i + 1) * 12.9898) * 43758.5453;
 		return 16.66 + (x - Math.floor(x) - 0.5) * 6;
 	},
-	// One long stall partway in, to exercise the delta clamp.
+	// One long stall partway in, to exercise the analytic solver's tolerance of a
+	// long gap between samples.
 	stall: (i) => (i === 20 ? 120 : 16.66),
 };
 

@@ -1,38 +1,59 @@
 {
-	"name": "@magic-spells/physics-engine",
-	"version": "1.1.0",
-	"description": "A physics-based engine for fun animations.",
-	"type": "module",
-	"main": "dist/physics-engine.min.js",
-	"module": "dist/physics-engine.esm.js",
-	"exports": {
-		".": {
-			"import": "./dist/physics-engine.esm.js",
-			"require": "./dist/physics-engine.min.js"
-		}
-	},
-	"files": [
-		"dist"
-	],
-	"scripts": {
-		"build": "vite build",
-		"dev": "vite",
-		"prod": "vite build --watch",
-		"test": "node --test test/*.test.js",
-		"baseline": "node scripts/generate-baseline.js",
-		"report": "node scripts/report.js"
-	},
-	"author": "Cory Schulz",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/magic-spells/physics-engine.git"
-	},
-	"publishConfig": {
-		"access": "public",
-		"registry": "https://registry.npmjs.org/"
-	},
-	"devDependencies": {
-		"vite": "^7.3.1"
-	}
+  "name": "@magic-spells/physics-engine",
+  "version": "2.0.0",
+  "description": "Frame-rate independent spring physics engine for smooth, natural animations",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/physics-engine.esm.js",
+  "module": "./dist/physics-engine.esm.js",
+  "types": "./dist/physics-engine.d.ts",
+  "unpkg": "./dist/physics-engine.min.js",
+  "jsdelivr": "./dist/physics-engine.min.js",
+  "exports": {
+    ".": {
+      "types": "./dist/physics-engine.d.ts",
+      "import": "./dist/physics-engine.esm.js",
+      "default": "./dist/physics-engine.esm.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "BUILD_FORMAT=es vite build && BUILD_FORMAT=umd vite build",
+    "dev": "vite",
+    "prod": "vite build --watch",
+    "test": "node --test test/*.test.js",
+    "baseline": "node scripts/generate-baseline.js",
+    "report": "node scripts/report.js",
+    "prepublishOnly": "npm run build"
+  },
+  "author": "Cory Schulz",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magic-spells/physics-engine.git"
+  },
+  "homepage": "https://github.com/magic-spells/physics-engine#readme",
+  "bugs": {
+    "url": "https://github.com/magic-spells/physics-engine/issues"
+  },
+  "keywords": [
+    "spring",
+    "physics",
+    "animation",
+    "easing",
+    "interpolation",
+    "damped-harmonic-oscillator"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "@magic-spells/event-emitter": "^0.1.0"
+  },
+  "devDependencies": {
+    "vite": "^8.2.0"
+  }
 }

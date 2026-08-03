@@ -130,6 +130,67 @@ test('a change listener may stop() on the settling frame', async () => {
 	}
 });
 
+test('changing the spring mid-flight keeps the motion continuous', async () => {
+	// setAttraction/setFriction re-solve from the current state, which restarts
+	// the clock. If the reseed used the wrong initial conditions the position
+	// would jump on the next frame; the spring is moving at most a few units per
+	// frame here, so anything larger than a frame's worth of travel is a jump.
+	const queue = [];
+	const realRAF = globalThis.requestAnimationFrame;
+	globalThis.requestAnimationFrame = (fn) => queue.push(fn);
+	try {
+		const engine = new PhysicsEngine(PARAM_SETS.bouncy);
+		const samples = [];
+		engine.on('change', (e) => samples.push(e.position));
+
+		const done = engine.animateTo(0, 100);
+		let time = 0;
+		let i = 0;
+		while (queue.length && i < 100000) {
+			queue.shift()(time);
+			time += 1000 / 60;
+			i++;
+			// Retune the spring partway up the first rise, once for each setter.
+			if (i === 10) engine.setAttraction(0.05);
+			if (i === 20) engine.setFriction(0.4);
+		}
+		await done;
+
+		// No single frame may move further than an undisturbed run of the retuned
+		// spring ever does — that is what a positional jump would look like.
+		const biggestStep = (list) =>
+			list.slice(1).reduce((worst, p, idx) => Math.max(worst, Math.abs(p - list[idx])), 0);
+		const undisturbed = await run({ profile: PROFILES.fps60, attraction: 0.05, friction: 0.22 });
+		const allowed = biggestStep(undisturbed.samples.map(([, p]) => p)) * 1.5;
+
+		assert.ok(
+			biggestStep(samples) <= allowed,
+			`retuning mid-flight jumped ${biggestStep(samples).toFixed(4)} units in one frame (allowed ${allowed.toFixed(4)})`
+		);
+
+		// Position alone is a weak check — carrying the wrong velocity into the
+		// reseed leaves position untouched and kills the motion instead. So also
+		// require the spring to still be travelling at a comparable speed in the
+		// same direction afterwards. Note the reseed frame itself re-seeds the
+		// clock and so re-reports the same position (a zero-length step); the
+		// comparison skips over it.
+		const step = (k) => samples[k] - samples[k - 1];
+		for (const frame of [10, 20]) {
+			const before = step(frame - 1);
+			const after = step(frame + 1);
+			assert.ok(
+				after / before > 0.5,
+				`frame ${frame} retune changed the per-frame movement from ${before.toFixed(4)} to ${after.toFixed(4)}`
+			);
+		}
+		assert.equal(samples[samples.length - 1], 100, 'retuned spring did not land on target');
+		assert.equal(engine.isAnimating, false);
+	} finally {
+		if (realRAF) globalThis.requestAnimationFrame = realRAF;
+		else delete globalThis.requestAnimationFrame;
+	}
+});
+
 test('a spring settles at its target', async () => {
 	for (const [name, params] of Object.entries(PARAM_SETS)) {
 		const r = await run({ profile: PROFILES.fps60, ...params, to: 100 });

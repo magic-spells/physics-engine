@@ -22,3 +22,6 @@ Thumbs.db
 
 # Package files
 *.tgz
+
+# Local Claude settings
+.claude/settings.local.json

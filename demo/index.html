@@ -11,26 +11,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Outfit:wght@200;300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap"
       rel="stylesheet"
     />
 
     <style>
       :root {
-        --bg-deep: #07060b;
-        --bg-card: #0f0e14;
-        --bg-card-hover: #15141c;
-        --border: #1e1c28;
-        --border-accent: #2a2636;
-        --gold: #c9a84c;
-        --gold-dim: #8a7233;
-        --gold-glow: rgba(201, 168, 76, 0.12);
-        --cream: #e8e0cc;
-        --cream-dim: #9a9284;
-        --text: #c4bfb2;
-        --text-dim: #6b665c;
-        --font-display: "Cormorant Garamond", Georgia, serif;
-        --font-body: "Outfit", system-ui, sans-serif;
+        --bg-deep: #06090d;
+        --bg-card: #0c1015;
+        --bg-card-hover: #10151b;
+        --border: #182029;
+        --border-accent: #23303b;
+        --teal: #5ecabb;
+        --teal-dim: #37857a;
+        --teal-glow: rgba(94, 202, 187, 0.12);
+        --cool: #86b5e8;
+        --amber: #d9a441;
+        --rose: #e08a6f;
+        --cream: #e6eae6;
+        --cream-dim: #97a19c;
+        --text: #c6cdc8;
+        --text-dim: #7c857f;
+        --font-display: 'Cormorant Garamond', Georgia, serif;
+        --font-body: 'Outfit', system-ui, sans-serif;
       }
 
       * {
@@ -60,7 +63,7 @@
         inset: 0;
         z-index: 9999;
         pointer-events: none;
-        opacity: 0.025;
+        opacity: 0.022;
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         background-repeat: repeat;
         background-size: 256px;
@@ -73,23 +76,23 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: auto;
-        padding: 4rem 2rem 2rem;
+        padding: 5.5rem 2rem 3rem;
         text-align: center;
       }
 
       .hero::before {
         content: "";
         position: absolute;
-        top: -40%;
+        top: -30%;
         left: 50%;
         transform: translateX(-50%);
-        width: 900px;
+        width: 1000px;
         height: 900px;
+        max-width: 130vw;
         background: radial-gradient(
           ellipse,
-          var(--gold-glow) 0%,
-          transparent 70%
+          var(--teal-glow) 0%,
+          transparent 68%
         );
         pointer-events: none;
       }
@@ -100,7 +103,7 @@
         font-size: 0.7rem;
         letter-spacing: 0.25em;
         text-transform: uppercase;
-        color: var(--gold);
+        color: var(--teal);
         border: 1px solid var(--border-accent);
         padding: 0.4em 1.4em;
         border-radius: 100px;
@@ -112,7 +115,7 @@
       }
 
       .hero-badge:hover {
-        border-color: var(--gold-dim);
+        border-color: var(--teal-dim);
         color: var(--cream);
       }
 
@@ -130,14 +133,14 @@
 
       .hero h1 em {
         font-style: italic;
-        color: var(--gold);
+        color: var(--teal);
       }
 
       .hero p {
         max-width: 560px;
         font-size: 1rem;
         line-height: 1.7;
-        color: var(--text);
+        color: var(--text-dim);
         opacity: 0;
         animation: fadeUp 1s ease forwards 0.65s;
       }
@@ -145,7 +148,7 @@
       .hero-line {
         width: 1px;
         height: 80px;
-        background: linear-gradient(to bottom, var(--gold-dim), transparent);
+        background: linear-gradient(to bottom, var(--teal-dim), transparent);
         margin-top: 3rem;
         opacity: 0;
         animation: fadeUp 1s ease forwards 0.85s;
@@ -153,12 +156,12 @@
 
       /* ---- Sections ---- */
       .demos {
-        max-width: 1100px;
+        max-width: 1080px;
         margin: 0 auto;
-        padding: 2rem 1.5rem 8rem;
+        padding: 1rem 1.5rem 7rem;
         display: flex;
         flex-direction: column;
-        gap: 3rem;
+        gap: 2.75rem;
       }
 
       .demo-section {
@@ -181,23 +184,30 @@
         display: flex;
         align-items: baseline;
         gap: 1rem;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .demo-index {
+        font-family: "Courier New", monospace;
+        font-size: 0.72rem;
+        color: var(--teal-dim);
+        letter-spacing: 0.1em;
       }
 
       .demo-section h2 {
         font-family: var(--font-display);
         font-weight: 400;
-        font-size: 1.8rem;
+        font-size: 1.85rem;
         color: var(--cream);
         letter-spacing: -0.01em;
       }
 
       .demo-desc {
-        font-size: 1rem;
-        color: var(--text);
-        line-height: 1.7;
-        margin-bottom: 2rem;
-        max-width: 560px;
+        font-size: 0.98rem;
+        color: var(--text-dim);
+        line-height: 1.6;
+        margin-bottom: 1.75rem;
+        max-width: 620px;
       }
 
       /* ---- Stage ---- */
@@ -249,15 +259,15 @@
       }
 
       .btn:hover {
-        border-color: var(--gold-dim);
-        color: var(--gold);
-        box-shadow: 0 0 20px rgba(201, 168, 76, 0.1);
+        border-color: var(--teal-dim);
+        color: var(--teal);
+        box-shadow: 0 0 20px rgba(94, 202, 187, 0.1);
       }
 
       .btn.active {
-        border-color: var(--gold);
-        color: var(--gold);
-        background: rgba(201, 168, 76, 0.06);
+        border-color: var(--teal);
+        color: var(--teal);
+        background: rgba(94, 202, 187, 0.06);
       }
 
       .btn:disabled {
@@ -284,10 +294,10 @@
       }
 
       .slider-value {
-        font-family: "Courier New", monospace;
-        font-size: 0.85rem;
-        color: var(--gold);
-        min-width: 50px;
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        color: var(--teal);
+        min-width: 56px;
         text-align: right;
       }
 
@@ -308,23 +318,23 @@
         width: 16px;
         height: 16px;
         border-radius: 50%;
-        background: var(--gold);
+        background: var(--teal);
         border: none;
-        box-shadow: 0 0 20px rgba(201, 168, 76, 0.35);
+        box-shadow: 0 0 20px rgba(94, 202, 187, 0.35);
         transition: box-shadow 0.2s ease;
       }
 
       input[type="range"]::-webkit-slider-thumb:hover {
-        box-shadow: 0 0 30px rgba(201, 168, 76, 0.55);
+        box-shadow: 0 0 30px rgba(94, 202, 187, 0.55);
       }
 
       input[type="range"]::-moz-range-thumb {
         width: 16px;
         height: 16px;
         border-radius: 50%;
-        background: var(--gold);
+        background: var(--teal);
         border: none;
-        box-shadow: 0 0 20px rgba(201, 168, 76, 0.35);
+        box-shadow: 0 0 20px rgba(94, 202, 187, 0.35);
       }
 
       /* ---- Readout ---- */
@@ -369,7 +379,7 @@
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background: var(--gold);
+        background: var(--teal);
         will-change: transform, opacity, background-color;
       }
 
@@ -391,7 +401,7 @@
         justify-content: center;
         gap: 2.5rem;
         flex-wrap: wrap;
-        margin: 0 auto 2.5rem;
+        margin: 0 auto 3.5rem;
         max-width: 680px;
         padding: 0 1.5rem;
         opacity: 0;
@@ -428,14 +438,45 @@
       }
 
       .install-value:hover {
-        border-color: var(--gold-dim);
+        border-color: var(--teal-dim);
       }
 
       .install-size {
         font-family: "Courier New", monospace;
         font-size: 0.88rem;
-        color: var(--gold);
+        color: var(--teal);
         padding: 0.5em 0;
+      }
+      .dep-list {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .dep-badge {
+        font-family: "Courier New", monospace;
+        font-size: 0.82rem;
+        color: var(--teal);
+        border: 1px solid var(--border-accent);
+        border-radius: 100px;
+        padding: 0.5em 1.4em;
+        text-decoration: none;
+        white-space: nowrap;
+        transition:
+          border-color 0.3s ease,
+          color 0.3s ease;
+      }
+      .dep-badge:hover {
+        border-color: var(--teal-dim);
+        color: var(--cream);
+      }
+      .dep-badge .dep-scope {
+        color: var(--text-dim);
+      }
+      .dep-badge:hover .dep-scope {
+        color: var(--cream-dim);
+      }
+
+      .install-item-size {
+        flex-basis: 100%;
       }
 
       /* ---- Code example ---- */
@@ -460,10 +501,73 @@
         -webkit-overflow-scrolling: touch;
       }
 
-      .code-example pre .hl-kw { color: var(--gold); }
-      .code-example pre .hl-str { color: #00b894; }
-      .code-example pre .hl-num { color: #e85d75; }
-      .code-example pre .hl-cm { color: var(--text-dim); font-style: italic; }
+      .kw { color: var(--teal); }
+      .fn { color: #7fe0cf; }
+      .str { color: #cf9d6a; }
+      .num { color: #e0836f; }
+      .cm { color: var(--text-dim); }
+      .prop { color: var(--cool); }
+
+      /* ---- Code aside ---- */
+      .code-aside {
+        margin-top: 1.5rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.35);
+        overflow: hidden;
+      }
+
+      .code-aside summary {
+        cursor: pointer;
+        list-style: none;
+        font-size: 0.65rem;
+        font-weight: 400;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        padding: 0.9rem 1.25rem;
+        transition: color 0.25s ease;
+        user-select: none;
+      }
+
+      .code-aside summary::-webkit-details-marker { display: none; }
+      .code-aside summary::before { content: "▸ "; color: var(--teal-dim); }
+      .code-aside[open] summary::before { content: "▾ "; }
+      .code-aside summary:hover { color: var(--cream-dim); }
+      .code-aside pre {
+        margin: 0;
+        padding: 0 1.25rem 1.25rem;
+        overflow-x: auto;
+      }
+      .code-aside code {
+        font-family: "Courier New", monospace;
+        font-size: 0.76rem;
+        line-height: 1.7;
+        color: var(--cream-dim);
+        white-space: pre;
+      }
+
+      /* ---- Footer ---- */
+      .foot {
+        text-align: center;
+        padding: 3rem 1.5rem 5rem;
+        color: var(--text-dim);
+        font-size: 0.85rem;
+      }
+
+      .foot a,
+      .hero p a {
+        color: var(--teal-dim);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.25s ease, color 0.25s ease;
+      }
+
+      .foot a:hover,
+      .hero p a:hover {
+        color: var(--teal);
+        border-color: var(--teal-dim);
+      }
 
       /* ---- Responsive ---- */
       @media (max-width: 640px) {
@@ -492,7 +596,7 @@
       <p>
         Spring-driven animation with real physics. These demos pair Physics
         Engine with
-        <a href="https://github.com/magic-spells/frame-engine" style="color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-dim)">@magic-spells/frame-engine</a>
+        <a href="https://github.com/magic-spells/frame-engine" target="_blank" rel="noopener">@magic-spells/frame-engine</a>
         to map spring motion onto any CSS property — colors, transforms,
         filters — all feeling alive.
       </p>
@@ -505,31 +609,37 @@
         <span class="install-label">Install</span>
         <code class="install-value">npm i @magic-spells/physics-engine</code>
       </div>
-      <div class="install-item">
+      <div class="install-item install-item-size">
         <span class="install-label">Size (gzip)</span>
-        <span class="install-size">~1.1 KB</span>
+        <span class="install-size">~1.4 KB</span>
+      </div>
+      <div class="install-item install-item-deps">
+        <span class="install-label">Uses</span>
+        <div class="dep-list">
+          <a class="dep-badge" href="https://github.com/magic-spells/event-emitter" target="_blank" rel="noopener"><span class="dep-scope">@magic-spells/</span>event-emitter</a>
+        </div>
       </div>
     </div>
 
     <!-- ======== CODE EXAMPLE ======== -->
     <div class="code-example">
-      <pre><span class="hl-kw">import</span> PhysicsEngine <span class="hl-kw">from</span> <span class="hl-str">'@magic-spells/physics-engine'</span>
+      <pre><span class="kw">import</span> PhysicsEngine <span class="kw">from</span> <span class="str">'@magic-spells/physics-engine'</span>
 
-<span class="hl-cm">// Create a spring with custom tension &amp; damping</span>
-<span class="hl-kw">const</span> spring = <span class="hl-kw">new</span> PhysicsEngine({
-  attraction: <span class="hl-num">0.026</span>,
-  friction:   <span class="hl-num">0.28</span>
+<span class="cm">// Create a spring with custom tension &amp; damping</span>
+<span class="kw">const</span> spring = <span class="kw">new</span> PhysicsEngine({
+  <span class="prop">attraction</span>: <span class="num">0.026</span>,
+  <span class="prop">friction</span>:   <span class="num">0.28</span>
 })
 
-<span class="hl-cm">// Listen for physics updates every frame</span>
-spring.on(<span class="hl-str">'change'</span>, ({ position, progress }) => {
-  element.style.transform = <span class="hl-str">`translateX(${</span>progress * <span class="hl-num">500</span><span class="hl-str">}px)`</span>
+<span class="cm">// Listen for physics updates every frame</span>
+spring.<span class="fn">on</span>(<span class="str">'change'</span>, ({ position, progress }) => {
+  element.style.transform = <span class="str">`translateX(${</span>progress * <span class="num">500</span><span class="str">}px)`</span>
 })
 
-spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class="hl-str">'settled'</span>))
+spring.<span class="fn">on</span>(<span class="str">'complete'</span>, () => console.log(<span class="str">'settled'</span>))
 
-<span class="hl-cm">// Animate from 0 → 1000 with initial velocity 20</span>
-<span class="hl-kw">await</span> spring.animateTo(<span class="hl-num">0</span>, <span class="hl-num">1000</span>, <span class="hl-num">20</span>)</pre>
+<span class="cm">// Animate from 0 → 1000 with initial velocity 20</span>
+<span class="kw">await</span> spring.<span class="fn">animateTo</span>(<span class="num">0</span>, <span class="num">1000</span>, <span class="num">20</span>)</pre>
     </div>
 
     <!-- ======== DEMOS ======== -->
@@ -537,6 +647,7 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
       <!-- ---- 01 Metamorphosis ---- -->
       <section class="demo-section">
         <div class="demo-header">
+          <span class="demo-index">01</span>
           <h2>Metamorphosis</h2>
         </div>
         <p class="demo-desc">
@@ -556,8 +667,8 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
               width: 130px;
               height: 130px;
               border-radius: 50%;
-              background-color: #c9a84c;
-              box-shadow: 0 0 60px rgba(201, 168, 76, 0.3);
+              background-color: #5ecabb;
+              box-shadow: 0 0 60px rgba(94, 202, 187, 0.3);
             "
           ></div>
         </div>
@@ -567,11 +678,37 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
           <button class="btn" id="morph-reset">Reset</button>
         </div>
         <div class="readout" id="morph-readout"></div>
+        <details class="code-aside">
+          <summary>view the spring</summary>
+          <pre><code><span class="kw">const</span> morphSpring = <span class="kw">new</span> <span class="fn">PhysicsEngine</span>({
+  <span class="prop">attraction</span>: <span class="num">0.011</span>,
+  <span class="prop">friction</span>: <span class="num">0.11</span>,
+});
+
+morphSpring.<span class="fn">on</span>(<span class="str">"change"</span>, ({ position, progress }) => {
+  <span class="kw">const</span> styles = morphFrames.<span class="fn">getFrame</span>(progress);
+  <span class="fn">applyStyles</span>(morphOrb, styles);
+  morphOrb.style.boxShadow =
+    <span class="str">`0 0 60px ${styles.backgroundColor}55, 0 0 120px ${styles.backgroundColor}22`</span>;
+  <span class="fn">renderReadout</span>(morphReadout, {
+    <span class="prop">progress</span>: progress.<span class="fn">toFixed</span>(<span class="num">3</span>),
+    <span class="prop">position</span>: position.<span class="fn">toFixed</span>(<span class="num">1</span>),
+    <span class="prop">backgroundColor</span>: styles.backgroundColor,
+    <span class="prop">borderRadius</span>: styles.borderRadius,
+    <span class="prop">transform</span>: styles.transform,
+  });
+});
+
+document.<span class="fn">getElementById</span>(<span class="str">"morph-go"</span>).<span class="fn">addEventListener</span>(<span class="str">"click"</span>, () => {
+  morphSpring.<span class="fn">animateTo</span>(<span class="num">0</span>, <span class="num">2000</span>, <span class="num">10</span>);
+});</code></pre>
+        </details>
       </section>
 
       <!-- ---- 02 Spring Traverse ---- -->
       <section class="demo-section">
         <div class="demo-header">
+          <span class="demo-index">02</span>
           <h2>Spring Traverse</h2>
         </div>
         <p class="demo-desc">
@@ -589,7 +726,7 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
               top: 55px;
               width: 80px;
               height: 80px;
-              background: var(--gold);
+              background: var(--teal);
               border-radius: 8px;
             "
           ></div>
@@ -599,11 +736,41 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
           <button class="btn" id="traverse-stop">Stop</button>
         </div>
         <div class="readout" id="traverse-readout"></div>
+        <details class="code-aside">
+          <summary>view the spring</summary>
+          <pre><code><span class="kw">const</span> traverseSpring = <span class="kw">new</span> <span class="fn">PhysicsEngine</span>({
+  <span class="prop">attraction</span>: <span class="num">0.03</span>,
+  <span class="prop">friction</span>: <span class="num">0.11</span>,
+});
+
+traverseSpring.<span class="fn">on</span>(<span class="str">"change"</span>, ({ position, progress }) => {
+  <span class="kw">const</span> frames = traverseForward
+    ? traverseForwardFrames
+    : traverseReturnFrames;
+  <span class="kw">const</span> styles = frames.<span class="fn">getFrame</span>(progress);
+  <span class="fn">applyStyles</span>(traverseBox, styles);
+  traverseBox.style.boxShadow =
+    <span class="str">`0 8px 40px ${styles.backgroundColor}33`</span>;
+  <span class="fn">renderReadout</span>(traverseReadout, {
+    <span class="prop">progress</span>: progress.<span class="fn">toFixed</span>(<span class="num">3</span>),
+    <span class="prop">position</span>: position.<span class="fn">toFixed</span>(<span class="num">1</span>),
+    <span class="prop">transform</span>: styles.transform,
+    <span class="prop">backgroundColor</span>: styles.backgroundColor,
+    <span class="prop">borderRadius</span>: styles.borderRadius,
+  });
+});
+
+traverseGoBtn.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, () => {
+  traverseGoBtn.disabled = <span class="kw">true</span>;
+  traverseSpring.<span class="fn">animateTo</span>(<span class="num">0</span>, <span class="num">1200</span>, <span class="num">20</span>);
+});</code></pre>
+        </details>
       </section>
 
       <!-- ---- 03 Parameter Lab ---- -->
       <section class="demo-section">
         <div class="demo-header">
+          <span class="demo-index">03</span>
           <h2>Parameter Lab</h2>
         </div>
         <p class="demo-desc">
@@ -621,7 +788,7 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
               top: 55px;
               width: 80px;
               height: 80px;
-              background: var(--gold);
+              background: var(--teal);
               border-radius: 10px;
             "
           ></div>
@@ -678,11 +845,35 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
           <span class="slider-value" id="lab-velocity-val">20</span>
         </div>
         <div class="readout" id="lab-readout"></div>
+        <details class="code-aside">
+          <summary>view the spring</summary>
+          <pre><code><span class="kw">function</span> <span class="fn">labAnimate</span>() {
+  <span class="kw">const</span> attraction =
+    <span class="fn">parseInt</span>(document.<span class="fn">getElementById</span>(<span class="str">"lab-attraction"</span>).value) / <span class="num">1000</span>;
+  <span class="kw">const</span> friction =
+    <span class="fn">parseInt</span>(document.<span class="fn">getElementById</span>(<span class="str">"lab-friction"</span>).value) / <span class="num">100</span>;
+  <span class="kw">const</span> distance = <span class="fn">parseInt</span>(
+    document.<span class="fn">getElementById</span>(<span class="str">"lab-distance"</span>).value,
+  );
+  <span class="kw">const</span> velocity = <span class="fn">parseInt</span>(
+    document.<span class="fn">getElementById</span>(<span class="str">"lab-velocity"</span>).value,
+  );
+
+  labSpring.<span class="fn">stop</span>();
+  labSpring = <span class="kw">new</span> <span class="fn">PhysicsEngine</span>({ attraction, friction });
+  <span class="fn">wireLabSpring</span>();
+  labSpring.<span class="fn">animateTo</span>(<span class="num">0</span>, distance, velocity);
+}
+
+document.<span class="fn">getElementById</span>(<span class="str">"lab-run"</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">"click"</span>, labAnimate);</code></pre>
+        </details>
       </section>
 
       <!-- ---- 04 Cascade ---- -->
       <section class="demo-section">
         <div class="demo-header">
+          <span class="demo-index">04</span>
           <h2>Cascade</h2>
         </div>
         <p class="demo-desc">
@@ -698,13 +889,41 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
           <button class="btn" id="cascade-stop">Stop All</button>
         </div>
         <div class="readout" id="cascade-readout"></div>
+        <details class="code-aside">
+          <summary>view the spring</summary>
+          <pre><code><span class="kw">function</span> <span class="fn">cascadeLaunch</span>(forward) {
+  cascadeSprings.<span class="fn">forEach</span>((spring) => spring.<span class="fn">stop</span>());
+  cascadeSprings.length = <span class="num">0</span>;
+
+  cascadeDots.<span class="fn">forEach</span>((dot, i) => {
+    <span class="fn">setTimeout</span>(() => {
+      <span class="kw">const</span> spring = <span class="kw">new</span> <span class="fn">PhysicsEngine</span>();
+      cascadeSprings.<span class="fn">push</span>(spring);
+
+      spring.<span class="fn">on</span>(<span class="str">"change"</span>, ({ progress }) => {
+        <span class="kw">const</span> styles = cascadeFrames.<span class="fn">getFrame</span>(progress);
+        <span class="fn">applyStyles</span>(dot, styles);
+        dot.style.boxShadow =
+          <span class="str">`0 4px 24px ${styles.backgroundColor}44`</span>;
+      });
+
+      <span class="kw">if</span> (forward) {
+        spring.<span class="fn">animateTo</span>(<span class="num">0</span>, <span class="num">1200</span>, <span class="num">20</span>);
+      } <span class="kw">else</span> {
+        spring.<span class="fn">animateTo</span>(<span class="num">1200</span>, <span class="num">0</span>, -<span class="num">20</span>);
+      }
+    }, i * <span class="num">60</span>);
+  });
+}</code></pre>
+        </details>
       </section>
     </main>
 
-    <script src="./frame-engine.min.js"></script>
+    <!-- UMD builds keep this demo static-hosting friendly on GitHub Pages. -->
+    <script src="../dist/physics-engine.min.js"></script>
+    <script src="./vendor/frame-engine.min.js"></script>
 
     <script type="module">
-      import PhysicsEngine from '../src/physics-engine.js';
       // ---- Helpers ----
       function applyStyles(el, styles) {
         for (const [prop, value] of Object.entries(styles)) {
@@ -729,7 +948,7 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
       // ========================================
       const morphFrames = new FrameEngine({
         0: {
-          backgroundColor: "#c9a84c",
+          backgroundColor: "#5ecabb",
           borderRadius: "50%",
           transform: "translate(-50%, -50%) scale(1) rotate(0deg)",
         },
@@ -793,7 +1012,7 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
         morphForward = true;
         const styles = morphFrames.getFrame(0);
         applyStyles(morphOrb, styles);
-        morphOrb.style.boxShadow = "0 0 60px rgba(201,168,76,0.3)";
+        morphOrb.style.boxShadow = "0 0 60px rgba(94,202,187,0.3)";
         renderReadout(morphReadout, { progress: "0.000", position: "0.0" });
       });
 
@@ -803,7 +1022,7 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
       const traverseForwardFrames = new FrameEngine({
         0: {
           transform: "translateX(0px) rotate(0deg) scale(1)",
-          backgroundColor: "#c9a84c",
+          backgroundColor: "#5ecabb",
           borderRadius: "8px",
         },
         35: {
@@ -841,7 +1060,7 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
         },
         100: {
           transform: "translateX(0px) rotate(0deg) scale(1)",
-          backgroundColor: "#c9a84c",
+          backgroundColor: "#5ecabb",
           borderRadius: "8px",
         },
       });
@@ -895,7 +1114,7 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
       const labFrames = new FrameEngine({
         0: {
           transform: "translateX(0px) scale(1)",
-          backgroundColor: "#c9a84c",
+          backgroundColor: "#5ecabb",
           borderRadius: "10px",
         },
         50: {
@@ -1001,7 +1220,7 @@ spring.on(<span class="hl-str">'complete'</span>, () => console.log(<span class=
       const cascadeFrames = new FrameEngine({
         0: {
           transform: "translateX(0px) translateY(0px) scale(1)",
-          backgroundColor: "#c9a84c",
+          backgroundColor: "#5ecabb",
           opacity: "1",
         },
         30: {
